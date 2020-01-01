@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>ML on Tom</title>
+    <title>ML on Tom&#39;s Blog</title>
     <link>https://teh.github.io/tags/ml/</link>
-    <description>Recent content in ML on Tom</description>
+    <description>Recent content in ML on Tom&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
     <lastBuildDate>Wed, 10 Aug 2016 00:00:00 +0000</lastBuildDate>

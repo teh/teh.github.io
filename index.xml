@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tom</title>
+    <title>Tom&#39;s Blog</title>
     <link>https://teh.github.io/</link>
-    <description>Recent content on Tom</description>
+    <description>Recent content on Tom&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
     <lastBuildDate>Sun, 04 Jun 2017 00:00:00 +0000</lastBuildDate>
