@@ -30,7 +30,7 @@
 </code></pre></div><p>We could generate the inverse by adding an argument sort function. Luckily numpy already has one of those:</p>
 <div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="n">inverse_permutation</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span>
-</code></pre></div><p>The permutation is your secret key, so you want to generate it only once and remember the output instead of generating a new one every time. Now it is  trivial to plug the functions together to generate <a href="https://gist.github.com/b9118219b07197eee5fe%3e"target="_blank">a complete example</a>.</p>
+</code></pre></div><p>The permutation is your secret key, so you want to generate it only once and remember the output instead of generating a new one every time. Now it is  trivial to plug the functions together to generate <a href="https://gist.github.com/b9118219b07197eee5fe"target="_blank">a complete example</a>.</p>
 <pre><code>Number:   0, shuffled: 29319, unshuffled: 0
 Number:   1, shuffled: 58998, unshuffled: 1
 Number:   2, shuffled: 29598, unshuffled: 2
