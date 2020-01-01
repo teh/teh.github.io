@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>IPython shells with nix, updated&nbsp;&ndash;&nbsp;Tom Stuff</title><link rel="stylesheet" href="/css/core.min.b36455a448f1b345e1de7ecfba4ebc7a459dc7297b9400f493511ce22e4017ae72a67d75b91ce89a5f95968e77e1380d.css" integrity="sha384-s2RVpEjxs0Xh3n7Puk68ekWdxyl7lAD0k1Ec4i5AF65ypn11uRzoml&#43;Vlo534TgN"><body>
+    <div class="base-body max-width"><section id="header" class="header max-body-width">
+    <div class="header-wrap">
+        <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom Stuff</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
+        <div class="header-right-side"></div>
+    </div>
+</section><div id="content" class="flex-body max-body-width"><section class="article-header">
+    <h1>IPython shells with nix, updated</h1><p class="article-date">2016-11-03</p></section>
+<article class="markdown-body"><p>I've written about IPython shells with Nix <a href="https://theshortlog.com/2016/02/11/ipython-nix/"target="_blank">previously</a>.</p>
+<p>One downside of relying on the nix-shell mechanism is that it uses environment variables, specifically <code>PYTHONPATH</code> which tends to be fragile when so much software insists on doing custom imports (e.g. gunicorn or Django).</p>
+<p>Below is an alternative version for your <code>.bashrc</code> which builds something like a Python virtualenv and then sets <code>PYTHONHOME</code>. So far I've had less trouble with this new version:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="k">function</span> nix-ipython <span class="o">{</span>
+    <span class="nv">packages</span><span class="o">=</span><span class="s2">&#34;&#34;</span>
+    <span class="k">for</span> arg in <span class="nv">$@</span><span class="p">;</span> <span class="k">do</span>
+        <span class="nv">packages</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$packages</span><span class="s2"> </span><span class="nv">$arg</span><span class="s2">&#34;</span>
+    <span class="k">done</span>
+
+    nix-shell -p <span class="s2">&#34;</span><span class="s2">(python.buildEnv.override { extraLibs = with pythonPackages; [ ipython </span><span class="nv">$packages</span><span class="s2"> ]; ignoreCollisions = true;})</span><span class="s2">&#34;</span> --command ipython
+<span class="o">}</span>
+</code></pre></div></article><section class="article-labels"><a class="article-tag li" href=/tags/nix/><span class="hashtag">#</span>Nix</a><a class="article-tag li" href=/tags/python/><span class="hashtag">#</span>Python</a></section><section class="article-navigation"><p><a class="link" href="/posts/purescript-s-c-backend/"><span class="li"></span>Purescript's c++ backend</a></p><p><a class="link" href="/posts/future-news-shadowbook-maps-every-human-with-an-online-presece/"><span class="li"></span>Future news: Shadowbook maps every human with an online presence</a class="link">
+    </p></section></div><section id="footer" class="footer max-body-width"><p>Tom Stuff</p>
+<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
+</body>
+
+</html>

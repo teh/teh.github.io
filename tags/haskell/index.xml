@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Haskell on Tom Stuff</title>
+    <link>https://teh.github.io/tags/haskell/</link>
+    <description>Recent content in Haskell on Tom Stuff</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-gb</language>
+    <lastBuildDate>Wed, 18 Jan 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://teh.github.io/tags/haskell/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Emulating closed type classes with closed type families</title>
+      <link>https://teh.github.io/posts/emulating-closed-type-classes-with-closed-type-families/</link>
+      <pubDate>Wed, 18 Jan 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/emulating-closed-type-classes-with-closed-type-families/</guid>
+      <description>&lt;p&gt;Haskell actually implements two languages: The value-level language, and a more limited type-level language that is evaluated at compile time.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Writing HTML apps in Haskell - Part 2</title>
+      <link>https://teh.github.io/posts/writing-html-apps-in-haskell-part-2/</link>
+      <pubDate>Thu, 01 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/writing-html-apps-in-haskell-part-2/</guid>
+      <description>&lt;p&gt;In &lt;a href=&#34;https://teh.github.io/2016/11/26/Writing-HTML-apps-in-Haskell-Part-1/&#34;&gt;part 1&lt;/a&gt; I described the basic two-process setup for accessing the DOM from within Haskell.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Writing HTML apps in Haskell - Part 1</title>
+      <link>https://teh.github.io/posts/writing-html-apps-in-haskell-part-1/</link>
+      <pubDate>Sat, 26 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/writing-html-apps-in-haskell-part-1/</guid>
+      <description>&lt;p&gt;Recently I wanted to to build a user interface in Haskell that runs on my Gnome desktop, not in the cloud (the audience gasps).&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Monitoring your NVidia GPU with Prometheus</title>
+      <link>https://teh.github.io/posts/monitoring-nvidia-gpu-with-prometheus/</link>
+      <pubDate>Thu, 25 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/monitoring-nvidia-gpu-with-prometheus/</guid>
+      <description>&lt;p&gt;I have a &lt;a href=&#34;https://pcpartpicker.com/user/pahLa6fi/saved/&#34;target=&#34;_blank&#34;&gt;deep learning box&lt;/a&gt; that runs various computations on both CPU and GPU. The ability to off-load expensive computations from my laptop is fantastic.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Unit testing with types</title>
+      <link>https://teh.github.io/posts/unit-testing-with-types/</link>
+      <pubDate>Fri, 22 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/unit-testing-with-types/</guid>
+      <description>&lt;p&gt;I&#39;m an incredibly sloppy programmer, and I lean on the compiler heavily to help me not be stupid. One of my favourite things is to use types to enforce properties of data.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ML on Tom Stuff</title>
+    <link>https://teh.github.io/tags/ml/</link>
+    <description>Recent content in ML on Tom Stuff</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-gb</language>
+    <lastBuildDate>Wed, 10 Aug 2016 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://teh.github.io/tags/ml/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Deep-learning Python environment with Nix</title>
+      <link>https://teh.github.io/posts/deep-learning-python-environment-with-nix/</link>
+      <pubDate>Wed, 10 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/deep-learning-python-environment-with-nix/</guid>
+      <description>&lt;p&gt;Getting the deep learning environment with all NVidia libaries set up is a bit fiddly. Thankfully I can lean on Nix for that as well.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

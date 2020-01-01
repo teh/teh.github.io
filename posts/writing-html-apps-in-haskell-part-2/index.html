@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Writing HTML apps in Haskell - Part 2&nbsp;&ndash;&nbsp;Tom Stuff</title><link rel="stylesheet" href="/css/core.min.b36455a448f1b345e1de7ecfba4ebc7a459dc7297b9400f493511ce22e4017ae72a67d75b91ce89a5f95968e77e1380d.css" integrity="sha384-s2RVpEjxs0Xh3n7Puk68ekWdxyl7lAD0k1Ec4i5AF65ypn11uRzoml&#43;Vlo534TgN"><body>
+    <div class="base-body max-width"><section id="header" class="header max-body-width">
+    <div class="header-wrap">
+        <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom Stuff</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
+        <div class="header-right-side"></div>
+    </div>
+</section><div id="content" class="flex-body max-body-width"><section class="article-header">
+    <h1>Writing HTML apps in Haskell - Part 2</h1><p class="article-date">2016-12-01</p></section>
+<article class="markdown-body"><p>In <a href="/2016/11/26/Writing-HTML-apps-in-Haskell-Part-1/">part 1</a> I described the basic two-process setup for accessing the DOM from within Haskell.</p>
+<p>In this instalment I will walk through several other crucial ingredients for a proper Haskell HTML app.</p>
+<h2 id="motivation">Motivation</h2>
+<p>First, here's a GIF of an animated DOM rendered in Haskell that can be modified with developer tools.</p>
+<p><a target="_blank" rel="noopener noreferrer" href="/images/Writing-HTML-apps-in-Haskell-Part-2.md/motivation.gif"><img class="img" src="/images/Writing-HTML-apps-in-Haskell-Part-2.md/motivation.gif"
+        alt/></a></p>
+<h2 id="serving-local-content">Serving local content</h2>
+<p>Browsers usually fetch data form the network via HTTP or one of its successors (http2, quic). The URL looks like <code>http://localhost/resource</code>. WebKit supports registering custom URL schemes so we don't have to hit the network and run a server. We instead register a <code>haskell://</code> schema with a <code>IO ()</code> callback which gets executed each time the rendering engine loads a resource.</p>
+<p>It's important to register this URI schema <strong>before</strong> creating an actual render view but the code itself is pretty simple:</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">webContextRegisterUriScheme</span> <span class="n">context</span> <span class="s">&#34;</span><span class="s">haskell</span><span class="s">&#34;</span> <span class="o">$</span> <span class="nf">\</span><span class="n">request</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+  <span class="n">uri</span> <span class="ow">&lt;-</span> <span class="n">uRISchemeRequestGetUri</span> <span class="n">request</span>
+  <span class="n">print</span> <span class="n">uri</span> <span class="c1">-- prints e.g. &#34;haskell://hello.html&#34;</span>
+  <span class="c1">-- [omitted]</span>
+<span class="c1">-- [omitted]</span>
+<span class="nf">webViewLoadUri</span> <span class="n">view</span> <span class="s">&#34;</span><span class="s">haskell://hello.html</span><span class="s">&#34;</span>
+</code></pre></div><h2 id="a-virtual-dom">A virtual DOM</h2>
+<p>Relative to JavaScript speeds DOM updates in browsers are slow. That's why all modern frameworks try to minimise DOM access. The most common technique is to keep a DOM-like data structure in memory. After changes we diff that DOM-like structure against its previous version, and generate a set of &ldquo;patches&rdquo; that then modify the real, in-browser DOM. Find a longer and nicer <a href="https://medium.com/cardlife-app/what-is-virtual-dom-c0ec6d6a925c#.w87ns97hq"target="_blank">description here</a>.</p>
+<p>I adapted <a href="https://github.com/bodil/purescript-vdom/blob/master/src/Data/VirtualDOM.purs"target="_blank">some code</a> from Bodil Stokke to implement a virtual DOM.</p>
+<p>The code for the GIF above can now be written like this:</p>
+<pre><code>testVNode :: Int -&gt; VNode
+testVNode n =
+  GE.div_ [onClick printCoordinates, GA.class_ &quot;container&quot;]
+  [ GE.h1_ [] [GE.text_ &quot;Hello&quot;]
+  , GE.div_ []
+    [ GE.button_ [GA.class_ &quot;btn btn-primary&quot;]
+      [GE.text_ (show n)]
+    ]
+  ]
+</code></pre><p>And at some later point you call <code>patch</code> to blast the virtual tree from <code>testVNode</code> into the real DOM:</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">patch</span> <span class="n">api</span> <span class="n">body</span> <span class="n">oldDom</span> <span class="n">newDom</span>
+</code></pre></div><h2 id="css">CSS</h2>
+<p>CSS preprocessors are another important component of modern web development. These preprocessors like <a href="http://lesscss.org/"target="_blank">less</a> and <a href="http://sass-lang.com/"target="_blank">sass</a> take away some of the pain of CSS. They allow e.g. defining variables for common colours, or take care of writing the correct browser-specific prefixes for some CSS properties.</p>
+<p>I added a simple sass reader to the example code that uses <a href="https://hackage.haskell.org/package/hsass"target="_blank">hsass</a> to render the <a href="https://github.com/twbs/bootstrap"target="_blank">bootstrap V4 sass code</a>.</p>
+<p>Including the sass file works as usual, except that we're using the <code>haskell://</code> scheme, and that hsass is re-processing on every reload.</p>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;stylesheet&#34;</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text/css&#34;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;haskell://bootstrap.css&#34;</span><span class="p"></span><span class="p">&gt;</span>
+</code></pre></div><h2 id="other-notes">Other notes</h2>
+<ul>
+<li>The current code can be <a href="https://github.com/teh/haskell-webkit2gtk"target="_blank">found here</a>.</li>
+<li>GObject and also WebKit require running code that modifies the DOM in the GObject main loop. So you can use all of Haskell's runtime but DOM modifications have to be run via <code>idleAdd</code>.</li>
+<li>Building the separate-process plugin requires manual linking against the Haskell runtime, e.g with <code>-lHSrts_thr_l-ghc8.0.1</code>. Note the <code>_thr</code> and the <code>_l</code>. Those two mean that we're linking against the runtime that supports threading and <a href="https://www.well-typed.com/blog/2014/02/ghc-events-analyze/"target="_blank">event logging</a>. The normal <code>-threaded</code> and <code>-eventlog</code> flags don't work for some reason.</li>
+<li>I want to use hpack but it <a href="https://github.com/sol/hpack/issues/139"target="_blank">doesn't support</a> enough Cabal features yet.</li>
+<li>The compile &amp; link times are crushing.</li>
+<li>The function names are auto-camel-cased from the GTK names which often leads to weird capitalisation, e.g. <code>uri_scheme_request_get_uri</code> becomes <code>uRISchemeRequestGetUri</code>.</li>
+</ul>
+<h2 id="what-next">What next?</h2>
+<p>I'm going to clean up the code to make it more like a library with a few entry points. If someone with stack-knowledge wanted to stackify it I'd be eager to help.</p>
+<p>I'm surprised how well this works. Writing a UI to render some home automation data took me less than an hour. I hope I can convince others to join in to make this a more generally useful project!</p></article><section class="article-labels"><a class="article-tag li" href=/tags/haskell/><span class="hashtag">#</span>Haskell</a></section><section class="article-navigation"><p><a class="link" href="/posts/seccomp-filters-for-nginx/"><span class="li"></span>seccomp filters for NGINX</a></p><p><a class="link" href="/posts/writing-html-apps-in-haskell-part-1/"><span class="li"></span>Writing HTML apps in Haskell - Part 1</a class="link">
+    </p></section></div><section id="footer" class="footer max-body-width"><p>Tom Stuff</p>
+<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
+</body>
+
+</html>

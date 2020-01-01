@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Nginx in NixOS 16.09&nbsp;&ndash;&nbsp;Tom Stuff</title><link rel="stylesheet" href="/css/core.min.b36455a448f1b345e1de7ecfba4ebc7a459dc7297b9400f493511ce22e4017ae72a67d75b91ce89a5f95968e77e1380d.css" integrity="sha384-s2RVpEjxs0Xh3n7Puk68ekWdxyl7lAD0k1Ec4i5AF65ypn11uRzoml&#43;Vlo534TgN"><body>
+    <div class="base-body max-width"><section id="header" class="header max-body-width">
+    <div class="header-wrap">
+        <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom Stuff</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
+        <div class="header-right-side"></div>
+    </div>
+</section><div id="content" class="flex-body max-body-width"><section class="article-header">
+    <h1>Nginx in NixOS 16.09</h1><p class="article-date">2016-09-11</p></section>
+<article class="markdown-body"><p>The beta release of <a href="http://lists.science.uu.nl/pipermail/nix-dev/2016-September/021658.html"target="_blank">NixOS 16.09</a> comes with a very cool config generator for your NGINX configuration. It makes it easy to:</p>
+<ul>
+<li>Use <a href="https://letsencrypt.org/"target="_blank">Let's Encrypt</a> for certificates</li>
+<li>Configure virtualhosts</li>
+<li>Have good default configurations for SSL and headers</li>
+<li>Avoid mistakes</li>
+</ul>
+<p>Here's a simple setup for serving SSL-only content on <code>example.com</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-nix" data-lang="nix"><span class="p">{</span>
+  <span class="s2">&#34;</span><span class="s2">e</span><span class="s2">x</span><span class="s2">a</span><span class="s2">m</span><span class="s2">p</span><span class="s2">l</span><span class="s2">e</span><span class="s2">.</span><span class="s2">c</span><span class="s2">o</span><span class="s2">m</span><span class="s2">&#34;</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">forceSSL</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>  <span class="c1"># 3</span>
+    <span class="n">enableACME</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>  <span class="c1"># 4</span>
+    <span class="n">locations</span><span class="o">.</span><span class="s2">&#34;</span><span class="s2">/</span><span class="s2">&#34;</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="n">root</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="s2">/</span><span class="s2">v</span><span class="s2">a</span><span class="s2">r</span><span class="s2">/</span><span class="s2">w</span><span class="s2">w</span><span class="s2">w</span><span class="s2">&#34;</span><span class="p">;</span>
+    <span class="p">}</span><span class="p">;</span>
+  <span class="p">}</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p><strong>Line 3</strong> forces traffic from unsecured HTTP (port 80) to HTTPS (port 443).</p>
+<p><strong>Line 4</strong> tells NixOS to get a certificate from Let's Encrypt (via the ACME protocol). This line does two things: NixOS generates a self-signed certificate to use as a placeholder until the ACME certificate arrives. It also enables a weekly systemd timer to renew the certificates in time - Let's Encrypt certs are valid for only three months.</p>
+<p>Lastly we want to enable NGINX with good default settings:</p>
+<div class="highlight"><pre class="chroma"><code class="language-nix" data-lang="nix"><span class="n">services</span><span class="o">.</span><span class="n">nginx</span> <span class="err">=</span> <span class="p">{</span>
+  <span class="n">enable</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
+  <span class="n">recommendedOptimisation</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
+  <span class="n">recommendedTlsSettings</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
+  <span class="n">recommendedGzipSettings</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
+  <span class="n">recommendedProxySettings</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
+  <span class="n">virtualHosts</span> <span class="o">=</span> <span class="kn">import</span> <span class="sr">./conf/example.com.nix</span><span class="p">;</span>
+<span class="p">}</span><span class="p">;</span>
+</code></pre></div><p>This gives us a grade B on <a href="https://www.ssllabs.com/ssltest/analyze.html"target="_blank">ssllabs.com</a> (as of September 2016) which is a good compromise between supporting older browsers and being secure.</p></article><section class="article-labels"><a class="article-tag li" href=/tags/nix/><span class="hashtag">#</span>Nix</a></section><section class="article-navigation"><p><a class="link" href="/posts/nix-security-updates-update/"><span class="li"></span>NixOS security-updates update</a></p><p><a class="link" href="/posts/monitoring-nvidia-gpu-with-prometheus/"><span class="li"></span>Monitoring your NVidia GPU with Prometheus</a class="link">
+    </p></section></div><section id="footer" class="footer max-body-width"><p>Tom Stuff</p>
+<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
+</body>
+
+</html>

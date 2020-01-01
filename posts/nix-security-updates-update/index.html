@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>NixOS security-updates update&nbsp;&ndash;&nbsp;Tom Stuff</title><link rel="stylesheet" href="/css/core.min.b36455a448f1b345e1de7ecfba4ebc7a459dc7297b9400f493511ce22e4017ae72a67d75b91ce89a5f95968e77e1380d.css" integrity="sha384-s2RVpEjxs0Xh3n7Puk68ekWdxyl7lAD0k1Ec4i5AF65ypn11uRzoml&#43;Vlo534TgN"><body>
+    <div class="base-body max-width"><section id="header" class="header max-body-width">
+    <div class="header-wrap">
+        <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom Stuff</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
+        <div class="header-right-side"></div>
+    </div>
+</section><div id="content" class="flex-body max-body-width"><section class="article-header">
+    <h1>NixOS security-updates update</h1><p class="article-date">2016-10-01</p></section>
+<article class="markdown-body"><p>This weekend Nicolas Pierron (<a href="http://github.com/nbp"target="_blank">nbp</a> on GitHub) came to London for a NixOS hackathon. He's been working on improving security updates in NixOS for a while. He's the author of the <a href="http://nixos.org/nixos/manual/index.html#sec-modularity"target="_blank">NixOS module system</a> amongst other things. He has a successful track record of complex, tree-wide changes so if anyone can nail this, it's him.</p>
+<p>The main output of our weekend is this blog post with his ideas.</p>
+<h2 id="problem-description">Problem description</h2>
+<p><strong>Problem tl;dr:</strong> It takes too damn long before security updates arrive on end-user machines or servers.</p>
+<p>A quick recap of how NixOS currently works. Let's work in a small universe with just <em>libc</em>, <em>openssl</em> and <em>nginx</em> in it. <em>openssl</em> depends on <em>libc</em>, and <em>nginx</em> depends on <em>openssl</em>, and <em>nginx</em> also depends on <em>libc</em> via <em>openssl</em>:</p>
+<p><a target="_blank" rel="noopener noreferrer" href="/images/nixos-security-updates-upadate/base-case.svg"><img class="img" src="/images/nixos-security-updates-upadate/base-case.svg"
+        alt="Normal case"/></a></p>
+<p>Now lets assume that we have a critical bug in <em>libc</em>:</p>
+<p><a target="_blank" rel="noopener noreferrer" href="/images/nixos-security-updates-upadate/libc-bug.svg"><img class="img" src="/images/nixos-security-updates-upadate/libc-bug.svg"
+        alt="libc bug"/></a></p>
+<p>In Nix each package specifies <em>all</em> dependecies explicitly. There is no shared library in <code>/lib</code>, but instead one in</p>
+<p><code>/nix/store/gwl3ppqj4i730nhd4f50ncl5jc4n97ks-glibc-2.23</code></p>
+<p>In a global-state system like Debian all one needs to do is replace <em>libc</em> in <code>/lib</code>. All programs read <code>/lib</code> and will therefore be fixed after the next restart.</p>
+<p>In Nix we need to update <strong>all dependencies</strong> to point to the fixed <em>libc</em>. This is done via a full re-build. I.e. every downstream dependency is re-compiled:</p>
+<p><a target="_blank" rel="noopener noreferrer" href="/images/nixos-security-updates-upadate/libc-bug-rebuilds.svg"><img class="img" src="/images/nixos-security-updates-upadate/libc-bug-rebuilds.svg"
+        alt/></a></p>
+<p><strong>This is a problem.</strong> A full rebuild of our 30k+ packages takes several days. If you want the critical security fix faster you need to compile on your local machine.</p>
+<h2 id="solution-constraints">Solution constraints</h2>
+<p>Before we describe Nicolas&rsquo; solution let's enumerate some constraints:</p>
+<ul>
+<li>Must be transparent to end-users</li>
+<li>Must be much faster than full rebuild</li>
+<li>Must work on Hydra</li>
+<li>Must work for nix-env and nix-shell, not just nix-channels</li>
+<li>No overhead for package maintainers</li>
+</ul>
+<h2 id="current-solution">Current solution</h2>
+<p>Right now NixOS has <code>replaceDependencies</code> and <code>replaceRuntimeDependencies</code> which are not easy to understand, and therefore rarely used by maintainers. I won't go into details because the adaption shows that this is a non-solution.</p>
+<p>As a result there now is a <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/release-small.nix"target="_blank">nixos-small</a> channel that contains a small subset of packages that rebuild quickly.</p>
+<h2 id="proposed-solution">Proposed solution</h2>
+<p>The problem is that recompiling all packages takes a long time. Therefore the solution must be to avoid re-compiling all packages! Security updates are usually ABI compatible which makes this a reasonable idea. Otherwise Debian could not work.</p>
+<p>In order to avoid re-compilation we can copy a package, and then adjust all pointers within it. Pointers follow a rigid naming scheme, namely <code>$hash-$name</code>, e.g. <code>/nix/store/f4gxsj6pn4ygqadwyk2m6xg1ywhfwxg1-openssl-1.0.2h</code>. For this rigid naming a regular expression replacement does the job.</p>
+<p>The scheme looks like this:</p>
+<p><a target="_blank" rel="noopener noreferrer" href="/images/nixos-security-updates-upadate/what-we-want.svg"><img class="img" src="/images/nixos-security-updates-upadate/what-we-want.svg"
+        alt/></a></p>
+<p>If you only care about using this new tech then you can stop reading here.</p>
+<h1 id="implementation-details">Implementation details</h1>
+<p>It took Nicolas an entire afternoon to explain this one so get buckled in. I am using my own words and understanding of his ideas in the hope that the translation requires less brain power than Nicolas has at his disposal.</p>
+<p>First, we need to rebuild all buggy packages. In our example above that's just <em>libc</em>, but the solution needs to work for more than one package.</p>
+<p>For this specific example: We have to rebuild <em>libc</em> somehow while avoiding rebuilding anything else immediately.</p>
+<h3 id="fixed-point-digression">Fixed-point digression</h3>
+<p>Fixed-points are used extensively in NixOS. A fixpoint is a mathematical concept that means &ldquo;apply a function to its own output until the output no longer changes&rdquo;. I.e. <code>f(x) == x</code>. Computers can use fixed points in combination with lazy evaluation. If nothing is left to evaluate then we have reached the fixed point.</p>
+<p>The trivial example is the constant function <em>f(x) = x</em>:</p>
+<pre><code>f(&quot;hello&quot;) = &quot;hello&quot;
+</code></pre><p>A Nix example taken <a href="http://lethalman.blogspot.co.uk/2014/11/nix-pill-17-nixpkgs-overriding-packages.html"target="_blank">from here</a> is the following function of one argument, <code>x</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-nix" data-lang="nix"><span class="n">f</span> <span class="err">=</span> <span class="n">x</span><span class="p">:</span> <span class="p">{</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">b</span><span class="p">;</span> <span class="p">}</span>
+</code></pre></div><p>By filling in <code>x</code> with the output of f(x) we get (not valid Nix syntax):</p>
+<div class="highlight"><pre class="chroma"><code class="language-nix" data-lang="nix"><span class="n">f</span> <span class="err">=</span> <span class="n">x</span><span class="p">:</span> <span class="p">{</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">b</span><span class="p">;</span> <span class="p">}</span>
+<span class="err">=</span><span class="o">&gt;</span> <span class="n">f</span> <span class="err">=</span> <span class="n">x</span><span class="p">:</span> <span class="p">{</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">c</span> <span class="o">=</span> <span class="p">{</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">b</span><span class="p">;</span> <span class="p">}</span><span class="o">.</span><span class="n">a</span>  <span class="c1"># [2]</span>
+                            <span class="o">+</span> <span class="p">{</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">b</span><span class="p">;</span> <span class="p">}</span><span class="o">.</span><span class="n">b</span><span class="p">;</span> <span class="p">}</span>
+<span class="err">=</span><span class="o">&gt;</span> <span class="n">f</span> <span class="err">=</span> <span class="n">x</span><span class="p">:</span> <span class="p">{</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;</span> <span class="p">}</span>
+<span class="err">=</span><span class="o">&gt;</span> <span class="n">f</span> <span class="err">=</span> <span class="n">x</span><span class="p">:</span> <span class="p">{</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span> <span class="p">}</span>
+</code></pre></div><p>Crucially, in line 2 the <code>.a</code> and <code>.b</code> accessors no longer reference <code>c</code>. That means the evaluator can return a value without looking at <code>x</code>. And because <code>x</code> really is <code>f(x)</code> the evaluator doesn't have to evaluate <code>f(x)</code> again, thus breaking the loop.</p>
+<p>In a strict language the evaluator would try to calculate <code>x</code> again and loop forever.</p>
+<!-- raw HTML omitted -->
+<p><em>nixpkgs</em> is a giant function that describes all packages in Nix - returning nested attribute sets. We can change an individual package via <a href="https://nixos.org/nixpkgs/manual/#sec-modify-via-packageOverrides"target="_blank"><code>packageOverrides</code></a>.</p>
+<p><code>packageOverrides</code> is a fixpoint of <em>nixpkgs</em>. To see why this is the case we go back to our small universe:</p>
+<p><a target="_blank" rel="noopener noreferrer" href="/images/nixos-security-updates-upadate/base-case.svg"><img class="img" src="/images/nixos-security-updates-upadate/base-case.svg"
+        alt="Normal case"/></a></p>
+<p>The <em>nixpkgs</em> attribute set would be a function:</p>
+<div class="highlight"><pre class="chroma"><code class="language-nix" data-lang="nix"><span class="n">nixpkgs</span><span class="p">:</span> <span class="p">{</span>
+  <span class="n">libc</span> <span class="o">=</span> <span class="p">{</span> <span class="o">.</span><span class="o">.</span><span class="o">.</span> <span class="p">}</span><span class="p">;</span>
+  <span class="n">openssl</span> <span class="o">=</span> <span class="p">{</span> <span class="n">nixpkgs</span><span class="o">.</span><span class="n">libc</span> <span class="p">}:</span> <span class="p">{</span> <span class="o">.</span><span class="o">.</span><span class="o">.</span> <span class="p">}</span><span class="p">;</span>
+  <span class="n">nginx</span> <span class="o">=</span> <span class="p">{</span> <span class="n">nixpkgs</span><span class="o">.</span><span class="n">openssl</span> <span class="p">}:</span> <span class="p">{</span> <span class="o">.</span><span class="o">.</span><span class="o">.</span> <span class="p">}</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>If I replace <em>libc</em> with <em>libc-fixed</em> in this attribute set then <em>openssl</em> will still be getting the old <em>libc</em> via the <em>nixpkgs</em> argument.</p>
+<div class="highlight"><pre class="chroma"><code class="language-nix" data-lang="nix"><span class="n">nixpkgs</span><span class="p">:</span> <span class="p">{</span>
+  <span class="n">libc</span> <span class="o">=</span> <span class="n">libc-fixed</span><span class="p">;</span>
+  <span class="n">openssl</span> <span class="o">=</span> <span class="p">{</span> <span class="n">nixpkgs</span><span class="o">.</span><span class="n">libc</span> <span class="p">}:</span> <span class="p">{</span> <span class="o">.</span><span class="o">.</span><span class="o">.</span> <span class="p">}</span><span class="p">;</span> <span class="c1"># nixpkgs does not yet contain nixpkgs.libc-fixed</span>
+  <span class="n">nginx</span> <span class="o">=</span> <span class="p">{</span> <span class="n">nixpkgs</span><span class="o">.</span><span class="n">openssl</span> <span class="p">}:</span> <span class="p">{</span> <span class="o">.</span><span class="o">.</span><span class="o">.</span> <span class="p">}</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>If we calculate the fixed point, then in the next iteration <em>nixpks</em> will contain <em>libc-fixed</em>, updating <em>openssl</em>. The final iteration will update <em>nginx</em> because now <em>nixpkgs</em> contains an updated <em>openssl</em>. So the updates steps are:</p>
+<ol>
+<li><em>libc</em></li>
+<li><em>libc</em>, <em>openssl</em></li>
+<li><em>libc</em>, <em>openssl</em>, <em>nginx</em></li>
+</ol>
+<p>This is the end of the fixpoint digression. Apart from an intuition for fixpoints there is one more takeaway: Our fixpoint evaluation operates one step at a time</p>
+<h3 id="one-step-a-time">One step a time</h3>
+<p>As we just saw fixed point evaluation in <em>nixpkgs</em> proceeds one &ldquo;step&rdquo; at a time. If you imagine the tree of dependencies, then the depth of that tree is the total number of steps.</p>
+<p>Going back to our initial problem:</p>
+<blockquote>
+<p>We have to rebuild <em>libc</em> somehow while avoiding rebuilding anything else immediately.</p>
+</blockquote>
+<p>The solution is easy: We run only a single step of our fixed point iteration. By running only one step we only rebuild <em>libc-fixed</em>.</p>
+<p>Two notes:</p>
+<ul>
+<li>This also works for updating N packages.</li>
+<li>We will run this step on Hydra as well, so <em>libc-fixed</em> will be available in binary form very quickly.</li>
+</ul>
+<h3 id="copy--fixup-instead-of-rebuild">Copy &amp; fixup instead of rebuild</h3>
+<p>We can now rebuild individual, buggy packages without rebuilding everything. But we still need to adjust the dependency pointers in the remaining packages. E.g. replace <em>gwl3ppqj4i730nhd4f50ncl5jc4n97ks-glibc-2.23</em> with <em>yxkk1j7h8kyglippv2df0gcx8yknhirb-glibc-2.23</em>.</p>
+<p>Once again we're going to evaluate a fixpoint of <em>nixpkgs</em>, but this time we're inserting a new derivation called <a href="https://github.com/NixOS/nixpkgs/pull/10851/files#diff-017a38a631b06991d33857f7681874b3R343"target="_blank">patchDependencies</a> that depends on the already-fully-built package. This new derivation</p>
+<ol>
+<li>Copies the package contents</li>
+<li>Patches the dependencies with an <code>sed</code> expression. Yep, that's right. We're using sed to patch binary files!</li>
+</ol>
+<p>This concludes the high-level overview. There are more icky details in Nicolas&rsquo; <a href="%28https://github.com/NixOS/nixpkgs/pull/10851%29">pull request</a>.</p>
+<h2 id="random-notes">Random notes</h2>
+<ul>
+<li>
+<p>A side-effect of using sed to patch arbitrary binary and text files is that we have to keep the same string length. If something changes from <code>glibc-2.23</code> to <code>glibc-2.23.1</code> then a simple replace will break offsets in shared libraries. This is handled in Nicolas&rsquo; patch by renaming the package if the lengths don't match.</p>
+</li>
+<li>
+<p>We're not building the copy &amp; fixup packages on Hydra. As a result we're saving time by not downloading the full binaries again. Instead they're built locally &ldquo;from source&rdquo;. Building is just copy &amp; fixup though, so roughly as fast as your disk IO.</p>
+</li>
+</ul>
+<h2 id="current-state--links">Current state &amp; links</h2>
+<ul>
+<li>Nicolas has an <a href="https://github.com/NixOS/nixpkgs/pull/10851"target="_blank">open pull-request here</a></li>
+<li><a href="https://github.com/nbp/slides/tree/master/NixCon/2015.ShippingSecurityUpdates"target="_blank">Slides from NixCon 2015</a></li>
+<li><a href="https://www.youtube.com/watch?v=RhcKXS00zEE"target="_blank">Video from NixCon 2015</a></li>
+</ul>
+<h2 id="what-you-can-do-now">What you can do now</h2>
+<p>In the nixpkgs git repo run:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">git fetch
+git checkout -t -b security-updates origin/security-updates
+nix-instantiate ./pkgs/test/security/static-analysis.nix --eval-only --show-trace <span class="p">|</span><span class="p">&amp;</span> tee analysis.log <span class="p">|</span> less
+</code></pre></div><p>This will run a static analysis to identify packages that would break with this scheme. The output looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">trace: List of 19568 potential issues:
+
+389-ds-base: error: unpatched-inputs: generation 0, inputs: (2, /nix/store/5x3wdjl1fj2xj72k8w9hlwmlq9jxmylp-perl-Mozilla-Ldap-1.5.3), (2, /nix/store/f86dgl1mx
+5rzrmwd2ikwxa5hvqakwv2h-perl-NetAddr-IP-4.079), (2, /nix/store/jzwpx242735k0530jrqnlnqdiak5rk77-perl-DB_File-1.831)
+389-ds-base: warning: static-linking: generation 0, inputs: (0, /nix/store/i142rpgf0kq5x8qz9pj33vcqkg9i6x9b-libkrb5-1.14.3)
+</code></pre></div><p>Once you finished the analysis you can have a look at the monumental task of making all packages compatible! I think Nicolas will update his PR to explain how each of these issues can be fixed.</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">$ bash  ./pkgs/test/security/static-analysis-stats.sh ./analysis.log
+(8249 alias, 8545 unpatched, 2774 recompile)
+</code></pre></div></article><section class="article-labels"><a class="article-tag li" href=/tags/nix/><span class="hashtag">#</span>Nix</a></section><section class="article-navigation"><p><a class="link" href="/posts/adding-error-context-in-nix/"><span class="li"></span>Adding error context in Nix</a></p><p><a class="link" href="/posts/nginx-in-nixos-16-09/"><span class="li"></span>Nginx in NixOS 16.09</a class="link">
+    </p></section></div><section id="footer" class="footer max-body-width"><p>Tom Stuff</p>
+<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
+</body>
+
+</html>

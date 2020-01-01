@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Python on Tom Stuff</title>
+    <link>https://teh.github.io/tags/python/</link>
+    <description>Recent content in Python on Tom Stuff</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-gb</language>
+    <lastBuildDate>Thu, 03 Nov 2016 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://teh.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>IPython shells with nix, updated</title>
+      <link>https://teh.github.io/posts/ipython-shells-with-nix-updated/</link>
+      <pubDate>Thu, 03 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/ipython-shells-with-nix-updated/</guid>
+      <description>&lt;p&gt;I&#39;ve written about IPython shells with Nix &lt;a href=&#34;https://theshortlog.com/2016/02/11/ipython-nix/&#34;target=&#34;_blank&#34;&gt;previously&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Quick IPython shells with nix-shell</title>
+      <link>https://teh.github.io/posts/ipython-nix/</link>
+      <pubDate>Thu, 11 Feb 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/ipython-nix/</guid>
+      <description>&lt;p&gt;I often want to quickly experiment with a Python package without the
+whole virtualenv shenanigans. For that I have an &lt;code&gt;ipython-nix&lt;/code&gt; command
+in my &lt;code&gt;.bashrc&lt;/code&gt;:&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
