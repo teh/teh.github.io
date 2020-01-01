@@ -1,0 +1,18 @@
+baseURL = "https://teh.github.io/"
+languageCode = "en-gb"
+title = "Tom Stuff"
+
+theme = "hugo-notepadium"
+
+[markup.highlight]
+codeFences = true
+noClasses = false
+
+[params]
+style = "light"  # default: auto. light: light theme, dark: dark theme, auto: based on system.
+slogan = " - The pay's not great, but the work is hard"
+
+[author]
+name = "Tom"
+github = "teh"
+twitter = "kumbunterland"
