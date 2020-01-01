@@ -5,7 +5,7 @@
     <div class="base-body max-width"><section id="header" class="header max-body-width">
     <div class="header-wrap">
         <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom Stuff</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
-        <div class="header-right-side"></div>
+        <div class="header-right-side"><div class="nav-wrap"><div class="nav"><a class="site-tag" href="/tags/">Tags</a></div></div></div>
     </div>
 </section><div id="content" class="flex-body max-body-width"><section class="article-header">
     <h1>IPython shells with nix, updated</h1><p class="article-date">2016-11-03</p></section>
@@ -20,7 +20,7 @@
 
     nix-shell -p <span class="s2">&#34;</span><span class="s2">(python.buildEnv.override { extraLibs = with pythonPackages; [ ipython </span><span class="nv">$packages</span><span class="s2"> ]; ignoreCollisions = true;})</span><span class="s2">&#34;</span> --command ipython
 <span class="o">}</span>
-</code></pre></div></article><section class="article-labels"><a class="article-tag li" href=/tags/nix/><span class="hashtag">#</span>Nix</a><a class="article-tag li" href=/tags/python/><span class="hashtag">#</span>Python</a></section><section class="article-navigation"><p><a class="link" href="/posts/purescript-s-c-backend/"><span class="li"></span>Purescript's c++ backend</a></p><p><a class="link" href="/posts/future-news-shadowbook-maps-every-human-with-an-online-presece/"><span class="li"></span>Future news: Shadowbook maps every human with an online presence</a class="link">
+</code></pre></div></article><section class="article-labels"><a class="article-tag li" href=/tags/nix/><span class="hashtag">#</span>Nix</a><a class="article-tag li" href=/tags/python/><span class="hashtag">#</span>Python</a></section><section class="article-navigation"><p><a class="link" href="/posts/purescript-s-c-backend/"><span class="li"></span>Purescript's c++ backend</a></p><p><a class="link" href="/posts/adding-error-context-in-nix/"><span class="li"></span>Adding error context in Nix</a class="link">
     </p></section></div><section id="footer" class="footer max-body-width"><p>Tom Stuff</p>
 <p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
 </body>

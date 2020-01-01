@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>FutureNews on Tom Stuff</title>
-    <link>https://teh.github.io/tags/futurenews/</link>
-    <description>Recent content in FutureNews on Tom Stuff</description>
+    <title>Tom Stuff</title>
+    <link>https://teh.github.io/personal/</link>
+    <description>Recent content on Tom Stuff</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
     <lastBuildDate>Sun, 09 Apr 2017 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://teh.github.io/tags/futurenews/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://teh.github.io/personal/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>

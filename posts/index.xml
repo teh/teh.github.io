@@ -21,15 +21,6 @@
     </item>
     
     <item>
-      <title>Future news: Order your coloured horse today</title>
-      <link>https://teh.github.io/posts/order-your-coloured-horse-today/</link>
-      <pubDate>Sun, 09 Apr 2017 00:00:00 +0000</pubDate>
-      
-      <guid>https://teh.github.io/posts/order-your-coloured-horse-today/</guid>
-      <description>&lt;!-- raw HTML omitted --&gt;</description>
-    </item>
-    
-    <item>
       <title>Nix hackathon March 2017</title>
       <link>https://teh.github.io/posts/nix-hackathon-march-2017/</link>
       <pubDate>Fri, 17 Mar 2017 00:00:00 +0000</pubDate>
@@ -110,15 +101,6 @@ First, some motivation by showing examples of what will be stored. Here is the g
       
       <guid>https://teh.github.io/posts/ipython-shells-with-nix-updated/</guid>
       <description>&lt;p&gt;I&#39;ve written about IPython shells with Nix &lt;a href=&#34;https://theshortlog.com/2016/02/11/ipython-nix/&#34;target=&#34;_blank&#34;&gt;previously&lt;/a&gt;.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Future news: Shadowbook maps every human with an online presence</title>
-      <link>https://teh.github.io/posts/future-news-shadowbook-maps-every-human-with-an-online-presece/</link>
-      <pubDate>Wed, 05 Oct 2016 00:00:00 +0000</pubDate>
-      
-      <guid>https://teh.github.io/posts/future-news-shadowbook-maps-every-human-with-an-online-presece/</guid>
-      <description>&lt;!-- raw HTML omitted --&gt;</description>
     </item>
     
     <item>
@@ -203,24 +185,6 @@ First, some motivation by showing examples of what will be stored. Here is the g
       <description>&lt;p&gt;I often want to quickly experiment with a Python package without the
 whole virtualenv shenanigans. For that I have an &lt;code&gt;ipython-nix&lt;/code&gt; command
 in my &lt;code&gt;.bashrc&lt;/code&gt;:&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Future news: Chinese diplomat assasinated by tailor-made virus</title>
-      <link>https://teh.github.io/posts/future-news-chinese-diplomat-assasinated-by-virus-specific-to-him/</link>
-      <pubDate>Fri, 08 Jan 2016 00:00:00 +0000</pubDate>
-      
-      <guid>https://teh.github.io/posts/future-news-chinese-diplomat-assasinated-by-virus-specific-to-him/</guid>
-      <description>&lt;!-- raw HTML omitted --&gt;</description>
-    </item>
-    
-    <item>
-      <title>Future news: Farmbot famine?</title>
-      <link>https://teh.github.io/posts/future-news-farmbot-famine/</link>
-      <pubDate>Fri, 04 Sep 2015 00:00:00 +0000</pubDate>
-      
-      <guid>https://teh.github.io/posts/future-news-farmbot-famine/</guid>
-      <description>&lt;!-- raw HTML omitted --&gt;</description>
     </item>
     
     <item>

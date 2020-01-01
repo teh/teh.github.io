@@ -5,7 +5,7 @@
     <div class="base-body max-width"><section id="header" class="header max-body-width">
     <div class="header-wrap">
         <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom Stuff</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
-        <div class="header-right-side"></div>
+        <div class="header-right-side"><div class="nav-wrap"><div class="nav"><a class="site-tag" href="/tags/">Tags</a></div></div></div>
     </div>
 </section><div id="content" class="flex-body max-body-width"><section class="article-header">
     <h1>Writing HTML apps in Haskell - Part 2</h1><p class="article-date">2016-12-01</p></section>
@@ -28,16 +28,16 @@
 <p>Relative to JavaScript speeds DOM updates in browsers are slow. That's why all modern frameworks try to minimise DOM access. The most common technique is to keep a DOM-like data structure in memory. After changes we diff that DOM-like structure against its previous version, and generate a set of &ldquo;patches&rdquo; that then modify the real, in-browser DOM. Find a longer and nicer <a href="https://medium.com/cardlife-app/what-is-virtual-dom-c0ec6d6a925c#.w87ns97hq"target="_blank">description here</a>.</p>
 <p>I adapted <a href="https://github.com/bodil/purescript-vdom/blob/master/src/Data/VirtualDOM.purs"target="_blank">some code</a> from Bodil Stokke to implement a virtual DOM.</p>
 <p>The code for the GIF above can now be written like this:</p>
-<pre><code>testVNode :: Int -&gt; VNode
-testVNode n =
-  GE.div_ [onClick printCoordinates, GA.class_ &quot;container&quot;]
-  [ GE.h1_ [] [GE.text_ &quot;Hello&quot;]
-  , GE.div_ []
-    [ GE.button_ [GA.class_ &quot;btn btn-primary&quot;]
-      [GE.text_ (show n)]
-    ]
-  ]
-</code></pre><p>And at some later point you call <code>patch</code> to blast the virtual tree from <code>testVNode</code> into the real DOM:</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">testVNode</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">VNode</span>
+<span class="nf">testVNode</span> <span class="n">n</span> <span class="ow">=</span>
+  <span class="kt">GE</span><span class="o">.</span><span class="n">div_</span> <span class="p">[</span><span class="n">onClick</span> <span class="n">printCoordinates</span><span class="p">,</span> <span class="kt">GA</span><span class="o">.</span><span class="n">class_</span> <span class="s">&#34;</span><span class="s">container</span><span class="s">&#34;</span><span class="p">]</span>
+  <span class="p">[</span> <span class="kt">GE</span><span class="o">.</span><span class="n">h1_</span> <span class="kt">[]</span> <span class="p">[</span><span class="kt">GE</span><span class="o">.</span><span class="n">text_</span> <span class="s">&#34;</span><span class="s">Hello</span><span class="s">&#34;</span><span class="p">]</span>
+  <span class="p">,</span> <span class="kt">GE</span><span class="o">.</span><span class="n">div_</span> <span class="kt">[]</span>
+    <span class="p">[</span> <span class="kt">GE</span><span class="o">.</span><span class="n">button_</span> <span class="p">[</span><span class="kt">GA</span><span class="o">.</span><span class="n">class_</span> <span class="s">&#34;</span><span class="s">btn btn-primary</span><span class="s">&#34;</span><span class="p">]</span>
+      <span class="p">[</span><span class="kt">GE</span><span class="o">.</span><span class="n">text_</span> <span class="p">(</span><span class="n">show</span> <span class="n">n</span><span class="p">)</span><span class="p">]</span>
+    <span class="p">]</span>
+  <span class="p">]</span>
+</code></pre></div><p>And at some later point you call <code>patch</code> to blast the virtual tree from <code>testVNode</code> into the real DOM:</p>
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">patch</span> <span class="n">api</span> <span class="n">body</span> <span class="n">oldDom</span> <span class="n">newDom</span>
 </code></pre></div><h2 id="css">CSS</h2>
 <p>CSS preprocessors are another important component of modern web development. These preprocessors like <a href="http://lesscss.org/"target="_blank">less</a> and <a href="http://sass-lang.com/"target="_blank">sass</a> take away some of the pain of CSS. They allow e.g. defining variables for common colours, or take care of writing the correct browser-specific prefixes for some CSS properties.</p>
