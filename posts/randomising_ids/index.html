@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Mapping between random-looking and increasing IDs&nbsp;&ndash;&nbsp;Tom Stuff</title><link rel="stylesheet" href="/css/core.min.b36455a448f1b345e1de7ecfba4ebc7a459dc7297b9400f493511ce22e4017ae72a67d75b91ce89a5f95968e77e1380d.css" integrity="sha384-s2RVpEjxs0Xh3n7Puk68ekWdxyl7lAD0k1Ec4i5AF65ypn11uRzoml&#43;Vlo534TgN"><body>
+    <div class="base-body max-width"><section id="header" class="header max-body-width">
+    <div class="header-wrap">
+        <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom Stuff</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
+        <div class="header-right-side"></div>
+    </div>
+</section><div id="content" class="flex-body max-body-width"><section class="article-header">
+    <h1>Mapping between random-looking and increasing IDs</h1><p class="article-date">2011-01-02</p></section>
+<article class="markdown-body"><p>Sometimes it's nice to have non-consecutive user-facing IDs. E.g. if you don't want to show away how many items you have in your database. Common approaches are UUIDs or encoding random bytes as base64. The downside is that those need an extra database column. For example, map (0 -&gt; 29319, 1 -&gt; 58998, 2 -&gt; 29598, &hellip;).</p>
+<p>Symmetric encryption, e.g. AES takes a block of bytes and transforms them to something random-looking so statistical attacks won't work. The cool thing is that an inverse transform exists that uniquely maps the random looking bytes back to the original text.</p>
+<p>AES is the name of the standard. The algorithm is a substitution-permutation network. It works in two steps. First each byte gets substituted by another byte. The substitution table is called <em>sbox</em> and has specific properties. E.g. a bit flip in the input flips roughly half the bits in the output. Generating good quality sboxes is complicated. For our trivial application we can re-use the <code>AES Rijndael sbox &lt;http://en.wikipedia.org/wiki/Rijndael_S-box&gt;</code>_.</p>
+<p>In the second step we apply a permutation on every bit. This permutation can be understood as the secret key.</p>
+<p>In code. First we split a 2-byte input integer into two bytes, apply the sbox, then transform back to a 2-byte integer. The second argument, <code>sbox</code>  is a 256-element array, the Rijndael sbox, containing a replacement byte at each offset.</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">apply_sbox</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sbox</span><span class="p">)</span><span class="p">:</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="o">*</span><span class="mi">8</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="o">*</span><span class="mi">8</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span>
+    <span class="k">return</span> <span class="n">sbox</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">|</span> <span class="n">sbox</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span>
+</code></pre></div><p>Applying a bit permutation looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">permute</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">permutation</span><span class="p">)</span><span class="p">:</span>
+    <span class="n">bits</span> <span class="o">=</span> <span class="sa"></span><span class="s1">&#39;</span><span class="s1">{:016b}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">new_bits</span> <span class="o">=</span> <span class="sa"></span><span class="s1">&#39;</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bits</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">permutation</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">new_bits</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</code></pre></div><p>The sboxes can be copied from many sources. They <code>look like this &lt;https://gist.github.com/2007345&gt;</code>_. Generating a permutation is simple:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">random</span>
+<span class="n">permutation</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span>
+</code></pre></div><p>We could generate the inverse by adding an argument sort function. Luckily numpy already has one of those:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="n">inverse_permutation</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">permutation</span><span class="p">)</span>
+</code></pre></div><p>The permutation is your secret key, so you want to generate it only once and remember the output instead of generating a new one every time. Now it is  trivial to plug the functions together to generate <code>a complete example &lt;https://gist.github.com/b9118219b07197eee5fe&gt;</code>_.</p>
+<pre><code>Number:   0, shuffled: 29319, unshuffled: 0
+Number:   1, shuffled: 58998, unshuffled: 1
+Number:   2, shuffled: 29598, unshuffled: 2
+Number:   3, shuffled: 21568, unshuffled: 3
+Number:   4, shuffled: 58307, unshuffled: 4
+Number:   5, shuffled: 22081, unshuffled: 5
+Number:   6, shuffled: 22368, unshuffled: 6
+Number:   7, shuffled: 43366, unshuffled: 7
+Number:   8, shuffled: 65178, unshuffled: 8
+Number:   9, shuffled: 6751 , unshuffled: 9
+</code></pre></article><section class="article-navigation"><p><a class="link" href="/posts/stuff-i-learned-1/"><span class="li"></span>Stuff I learned - 1</a></p><p><a class="link" href="/posts/gmail_backup/"><span class="li"></span>Backing up from gmail</a class="link">
+    </p></section></div><section id="footer" class="footer max-body-width"><p>Tom Stuff</p>
+<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
+</body>
+
+</html>

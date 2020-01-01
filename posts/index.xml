@@ -260,6 +260,15 @@ in my &lt;code&gt;.bashrc&lt;/code&gt;:&lt;/p&gt;</description>
     </item>
     
     <item>
+      <title>Mapping between random-looking and increasing IDs</title>
+      <link>https://teh.github.io/posts/randomising_ids/</link>
+      <pubDate>Sun, 02 Jan 2011 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/randomising_ids/</guid>
+      <description>&lt;p&gt;Sometimes it&#39;s nice to have non-consecutive user-facing IDs. E.g. if you don&#39;t want to show away how many items you have in your database. Common approaches are UUIDs or encoding random bytes as base64. The downside is that those need an extra database column. For example, map (0 -&amp;gt; 29319, 1 -&amp;gt; 58998, 2 -&amp;gt; 29598, &amp;hellip;).&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>Backing up from gmail</title>
       <link>https://teh.github.io/posts/gmail_backup/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
