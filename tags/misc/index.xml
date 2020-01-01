@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Misc on Tom Stuff</title>
+    <title>Misc on Tom</title>
     <link>https://teh.github.io/tags/misc/</link>
-    <description>Recent content in Misc on Tom Stuff</description>
+    <description>Recent content in Misc on Tom</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
     <lastBuildDate>Thu, 11 Aug 2016 00:00:00 +0000</lastBuildDate>
@@ -18,6 +18,18 @@
       
       <guid>https://teh.github.io/posts/3d-printing-a-lens-cap/</guid>
       <description>&lt;p&gt;While phone cameras are getting really amazing I still like my old Sony because it allows me to fiddle with exposure etc.; It has a very good sensor and lens.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>The four horsemen of design</title>
+      <link>https://teh.github.io/posts/four-horsemen-of-design/</link>
+      <pubDate>Thu, 26 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/four-horsemen-of-design/</guid>
+      <description>&lt;p&gt;As a fairly technical agency we do occasionally need help from our
+fantastic freelance designer to get a good looking product. You can
+read her take on design rules
+&lt;a href=&#34;http://manifesto.co.uk/design-principles-gestalt-white-space-perception/&#34;target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
     
     <item>

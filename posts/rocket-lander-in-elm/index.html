@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Experience report: Rocket lander in Elm&nbsp;&ndash;&nbsp;Tom</title><link rel="stylesheet" href="/css/core.min.5781a4bbdb0627948ba3c545f656d12f44a565a9c9e938277d50a58bdba972e96cc33ce5f6ed8edee515d8b5d79e8423.css" integrity="sha384-V4Gku9sGJ5SLo8VF9lbRL0SlZanJ6TgnfVCli9upculswzzl9u2O3uUV2LXXnoQj"><body>
+    <div class="base-body max-width"><section id="header" class="header max-body-width">
+    <div class="header-wrap">
+        <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
+        <div class="header-right-side"><div class="nav-wrap"><div class="nav"><a class="site-tag" href="/tags/">Tags</a></div></div></div>
+    </div>
+</section><div id="content" class="flex-body max-body-width"><section class="article-header">
+    <h1>Experience report: Rocket lander in Elm</h1><p class="article-date">2015-02-15</p></section>
+<article class="markdown-body"><p>Writing anything substantial in JavaScript is hard because JavaScript
+lacks many of the tools programmers expect these days, like a coherent
+and strong type system.</p>
+<p>For that reason we are investigating various new compile-to-JavaScript
+languages. In this post we're looking at
+<a href="http://elm-lang.org/"target="_blank">Elm</a>. To get a better feel for the language I
+implemented a small game:</p>
+<p><a href="/other/rocket-lander-in-elm/ship.html">Play the demo (desktop only, sorry!)</a></p>
+<p>First though, why is JavaScript hard? Consider the following cases:</p>
+<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="o">&gt;</span> <span class="s2">&#34;hi&#34;</span> <span class="o">*</span> <span class="mi">0</span>
+<span class="kc">NaN</span>
+<span class="o">&gt;</span> <span class="s2">&#34;2&#34;</span> <span class="o">*</span> <span class="mi">0</span>
+<span class="mi">0</span>
+<span class="o">&gt;</span> <span class="s2">&#34;2&#34;</span> <span class="o">+</span> <span class="mi">0</span>
+<span class="s2">&#34;20&#34;</span>
+<span class="o">&gt;</span> <span class="kc">null</span> <span class="o">-</span> <span class="kc">undefined</span>
+<span class="kc">NaN</span>
+</code></pre></div><p><a href="https://www.destroyallsoftware.com/talks/wat"target="_blank">The famous Wat video</a>
+has more examples after the brief part about Ruby.</p>
+<p>People noticed this of course, and to fix these issues they started
+developing new languages that transpile to JavaScript. Some well-known
+ones are <a href="http://coffeescript.org/"target="_blank">CoffeeScript</a>,
+<a href="http://www.typescriptlang.org/"target="_blank">TypeScript</a> and
+<a href="https://www.dartlang.org/"target="_blank">Dart</a>.</p>
+<p>I have spent a reasonable amount of time with all of the above,
+writing actual production code. I consider all of them an improvement
+over the very low bar that is JavaScript, but none of them get me
+excited.</p>
+<p>Picking e.g. TypeScript: It is high-ceremony to define interfaces, and
+the type-safety only helps if a sufficiently large amount of code is
+type-annotated. It's like a phase change: Below a certain threshold
+one might as well just omit all annotations because they help so
+little. Luckily a large body of type annotations has been
+<a href="https://github.com/borisyankov/DefinitelyTyped/"target="_blank">developed already</a>.</p>
+<p>The following snippet is a simplified version of a production
+bug we had because of an intermediate function with an <code>any</code> type
+argument:</p>
+<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">mul</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="nx">number</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span> <span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">a</span> <span class="o">*</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">anymul</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">mul</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// The following doesn&#39;t compile and that&#39;s great.
+</span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">mul</span><span class="p">(</span><span class="p">[</span><span class="p">]</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="p">)</span><span class="p">;</span> <span class="c1">// Breaks!
+</span><span class="c1"></span>
+<span class="c1">// This does compile though:
+</span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">anymul</span><span class="p">(</span><span class="p">[</span><span class="p">]</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="p">)</span><span class="p">;</span>
+</code></pre></div><p>In the last few years the space of compile-to-JavaScript got more
+crowded, and a lot of the new entrants are either based on more
+principled languages like Haskell, or compile well-typed languages
+directly. To name a few: <a href="http://www.purescript.org/"target="_blank">PureScript</a>,
+<a href="http://ocsigen.org/js_of_ocaml/"target="_blank">js_of_ocaml</a>,
+<a href="http://ghcjs.org/"target="_blank">ghcjs</a>, <a href="http://elm-lang.org/"target="_blank">Elm</a>,
+<a href="https://github.com/faylang/fay/wiki"target="_blank">Fay</a>,
+<a href="https://github.com/clojure/clojurescript"target="_blank">clojurescript</a>,
+<a href="http://www.scala-js.org/"target="_blank">scala.js</a>.</p>
+<h2 id="enter-elm">Enter Elm</h2>
+<p>Elm is a statically typed, functional language with immutable data
+structures and first-class support for <a href="http://en.wikipedia.org/wiki/Functional_reactive_programming"target="_blank">functional reactive
+programming</a>.</p>
+<p>Elm also comes with a standard library that contains lots of useful
+tools such as an implementation of the
+<a href="https://github.com/Matt-Esch/virtual-dom"target="_blank">virtual-DOM</a>,
+famous for making <a href="http://facebook.github.io/react/"target="_blank">React</a> so
+speedy.</p>
+<p>Like in Haskell type annotations can be given inline, or in a line
+above a function, and types always start with upper case:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elm" data-lang="elm"><span class="mi">1</span> <span class="nf">:</span> <span class="kt">Int</span>
+<span class="kt">True</span> <span class="nf">:</span> <span class="kt">Bool</span>
+<span class="p">[</span><span class="s">&#34;</span><span class="s">a</span><span class="s">b</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;</span><span class="s">c</span><span class="s">d</span><span class="s">e</span><span class="s">&#34;</span><span class="p">]</span> <span class="nf">:</span> <span class="kt">List</span> <span class="kt">String</span>
+
+<span class="nv">mul</span> <span class="nf">:</span> <span class="kt">Int</span> <span class="nf">-&gt;</span> <span class="kt">Int</span> <span class="nf">-&gt;</span> <span class="kt">Int</span>
+<span class="nv">mul</span> <span class="nv">a</span> <span class="nv">b</span> <span class="nf">=</span> <span class="nv">a</span> <span class="nf">*</span> <span class="nv">b</span>
+</code></pre></div><p>Elm starts execution at the <code>main</code> entry point:</p>
+<pre><code>import Text
+
+main = Text.plainText &quot;Hello from Elm.&quot;
+</code></pre><p>To see more code check out our rocket lander game
+<a href="https://github.com/WeAreWizards/elm-rocket-lander/blob/master/Ship.elm"target="_blank">on GitHub</a></p>
+<p>To get going I recommend installing Elm via Haskell's
+<a href="https://www.haskell.org/cabal/"target="_blank">Cabal-Install</a> which is
+available on most distributions:</p>
+<pre><code>cabal update
+cabal install elm-make elm-package elm-compiler
+</code></pre><p>This is not a tutorial so I refer to Elm's
+<a href="http://elm-lang.org/Learn.elm"target="_blank">own documentation</a> to learn more.</p>
+<h1 id="frp">FRP</h1>
+<p>Elm's functional reactive programming (FRP) connects inputs
+(&ldquo;signals&rdquo;) to code that depends on these signals, forming a directed
+graph in the process.</p>
+<p>Anything that generates DOM events can be a signal in Elm. E.g. the
+mouse moving or a key press. Elm also has a signal that generates a
+steady tick, e.g. at 30 frames-per-second, which is useful for
+programming games. <strong>Edit:</strong> As Jason Merrill points out
+<a href="https://blog.wearewizards.io/experience-report-rocket-lander-in-elm#comment-1863077473"target="_blank">in the comments</a>
+there is <code>fpsWhen</code> which allows switchting of the <code>fps</code> updates. Thanks Jason!</p>
+<p>Every signal in Elm propagates to all code that depends on it. The
+flow is usually something like (Input -&gt; Update application state -&gt;
+Redraw application).</p>
+<p>Elm requires setting up the entire signal graph <em>before</em> the
+application starts. That makes it easier to reason about inputs
+flowing through the code, but it also comes with some downsides:</p>
+<p>E.g. for the
+<a href="/other/rocket-lander-in-elm/ship.html">rocket lander demo</a> I need a
+30 frames-per-second signal to animate the game. I have to set that up
+at game start and can't switch it off. I.e. the help-screen at the
+beginning is re-rendering 30 times a second, even though nothing
+changes.</p>
+<p>For a silly little Game that's probably fine. Consider though: An app
+that deals with user input will see a few events a second with long
+pauses of nothing happening. If you wanted to add an animation that
+fades out at 30 frames per second then the app would need to run at 30
+FPS the whole time. In these cases it's best to use JavaScript
+directly via Elm's (<a href="http://elm-lang.org/learn/Ports.elm"target="_blank">ports</a>).</p>
+<p>See
+<a href="https://www.youtube.com/watch?v=Agu6jipKfYw"target="_blank">this video from Strange Loop 2014</a>
+for why the FRP graph is fixed.</p>
+<h1 id="maturity">Maturity</h1>
+<p>Elm is new, and it shows. There are very few libraries. There are also
+bugs: Despite the promise of producing error-free JavaScript I managed
+to create a few compiling-but-broken programs. E.g. the following
+compiles,</p>
+<div class="highlight"><pre class="chroma"><code class="language-Elm" data-lang="Elm"> <span class="nv">ship</span> <span class="nf">=</span> <span class="nv">shipUpdate</span>
+           <span class="nv">game</span><span class="nf">.</span><span class="nv">gravity</span>
+           <span class="p">(</span><span class="kr">if</span> <span class="nv">game</span><span class="nf">.</span><span class="nv">ship</span><span class="nf">.</span><span class="nv">fuel</span> <span class="nf">&gt;</span> <span class="mi">0</span> <span class="kr">then</span> <span class="nv">arrows</span><span class="nf">.</span><span class="nv">y</span> <span class="nf">==</span> <span class="mi">1</span> <span class="kr">else</span> <span class="kt">False</span><span class="p">)</span>
+           <span class="p">(</span><span class="kr">if</span> <span class="nv">game</span><span class="nf">.</span><span class="nv">ship</span><span class="nf">.</span><span class="nv">fuel</span> <span class="nf">&gt;</span> <span class="mi">0</span> <span class="kr">then</span> <span class="nv">arrows</span><span class="nf">.</span><span class="nv">x</span> <span class="kr">else</span> <span class="mi">0</span><span class="p">)</span>
+           <span class="nv">ship</span>
+</code></pre></div><p>but throws a <code>&quot;ship is undefined&quot;</code> error in JavaScript. I used <code>ship</code>
+instead of <code>game.ship</code> in the last line by accident.</p>
+<p>Interacting with the outside world through WebSockets and HTTP works
+but is not well thought out. E.g. there is no error handling for
+WebSockets. Elm's main author, Evan Czaplicki, has some good ideas for
+improving this with a
+<a href="https://github.com/elm-lang/core/blob/promises/src/Promise.elm"target="_blank">promise-API</a>
+so I don't think this will be a problem for much longer.</p>
+<h1 id="would-use-again">Would use again</h1>
+<p>Despite sounding critical my experience was very smooth. Elm requires
+code to be explicit about state, and cheating is <em>very hard</em>. After a
+few hours of getting used to that I reaped the benefits in form of a
+game that worked immediately.</p>
+<p>I believe that Elm will be usable for non-game programming at some
+point, but it's still missing a few bits like the promise API I
+mentioned above.</p>
+<p>Just as I finished writing this Evan released an
+<a href="https://github.com/evancz/elm-architecture-tutorial#the-elm-architecture"target="_blank">excellent tutorial on how to architect apps in Elm</a></p></article><section class="article-navigation"><p><a class="link" href="/posts/four-horsemen-of-design/"><span class="li"></span>The four horsemen of design</a></p><p><a class="link" href="/posts/stuff-i-learned-3/"><span class="li"></span>Stuff I learned - 3</a class="link">
+    </p></section></div><section id="footer" class="footer max-body-width"><p>Tom</p>
+<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
+</body>
+
+</html>

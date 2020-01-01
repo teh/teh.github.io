@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>NixOS security-updates update&nbsp;&ndash;&nbsp;Tom Stuff</title><link rel="stylesheet" href="/css/core.min.b36455a448f1b345e1de7ecfba4ebc7a459dc7297b9400f493511ce22e4017ae72a67d75b91ce89a5f95968e77e1380d.css" integrity="sha384-s2RVpEjxs0Xh3n7Puk68ekWdxyl7lAD0k1Ec4i5AF65ypn11uRzoml&#43;Vlo534TgN"><body>
+<meta name="supported-color-schemes" content="light dark"><title>NixOS security-updates update&nbsp;&ndash;&nbsp;Tom</title><link rel="stylesheet" href="/css/core.min.5781a4bbdb0627948ba3c545f656d12f44a565a9c9e938277d50a58bdba972e96cc33ce5f6ed8edee515d8b5d79e8423.css" integrity="sha384-V4Gku9sGJ5SLo8VF9lbRL0SlZanJ6TgnfVCli9upculswzzl9u2O3uUV2LXXnoQj"><body>
     <div class="base-body max-width"><section id="header" class="header max-body-width">
     <div class="header-wrap">
-        <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom Stuff</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
+        <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
         <div class="header-right-side"><div class="nav-wrap"><div class="nav"><a class="site-tag" href="/tags/">Tags</a></div></div></div>
     </div>
 </section><div id="content" class="flex-body max-body-width"><section class="article-header">
@@ -63,7 +63,7 @@
 <span class="err">=</span><span class="o">&gt;</span> <span class="n">f</span> <span class="err">=</span> <span class="n">x</span><span class="p">:</span> <span class="p">{</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span> <span class="p">}</span>
 </code></pre></div><p>Crucially, in line 2 the <code>.a</code> and <code>.b</code> accessors no longer reference <code>c</code>. That means the evaluator can return a value without looking at <code>x</code>. And because <code>x</code> really is <code>f(x)</code> the evaluator doesn't have to evaluate <code>f(x)</code> again, thus breaking the loop.</p>
 <p>In a strict language the evaluator would try to calculate <code>x</code> again and loop forever.</p>
-<!-- raw HTML omitted -->
+<hr>
 <p><em>nixpkgs</em> is a giant function that describes all packages in Nix - returning nested attribute sets. We can change an individual package via <a href="https://nixos.org/nixpkgs/manual/#sec-modify-via-packageOverrides"target="_blank"><code>packageOverrides</code></a>.</p>
 <p><code>packageOverrides</code> is a fixpoint of <em>nixpkgs</em>. To see why this is the case we go back to our small universe:</p>
 <p><a target="_blank" rel="noopener noreferrer" href="/images/nixos-security-updates-upadate/base-case.svg"><img class="img" src="/images/nixos-security-updates-upadate/base-case.svg"
@@ -137,7 +137,7 @@ nix-instantiate ./pkgs/test/security/static-analysis.nix --eval-only --show-trac
 <div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">$ bash  ./pkgs/test/security/static-analysis-stats.sh ./analysis.log
 (8249 alias, 8545 unpatched, 2774 recompile)
 </code></pre></div></article><section class="article-labels"><a class="article-tag li" href=/tags/nix/><span class="hashtag">#</span>Nix</a></section><section class="article-navigation"><p><a class="link" href="/posts/adding-error-context-in-nix/"><span class="li"></span>Adding error context in Nix</a></p><p><a class="link" href="/posts/nginx-in-nixos-16-09/"><span class="li"></span>Nginx in NixOS 16.09</a class="link">
-    </p></section></div><section id="footer" class="footer max-body-width"><p>Tom Stuff</p>
+    </p></section></div><section id="footer" class="footer max-body-width"><p>Tom</p>
 <p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
 </body>
 

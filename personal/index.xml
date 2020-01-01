@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tom Stuff</title>
+    <title>Tom</title>
     <link>https://teh.github.io/personal/</link>
-    <description>Recent content on Tom Stuff</description>
+    <description>Recent content on Tom</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
     <lastBuildDate>Sun, 09 Apr 2017 00:00:00 +0000</lastBuildDate>
@@ -17,7 +17,7 @@
       <pubDate>Sun, 09 Apr 2017 00:00:00 +0000</pubDate>
       
       <guid>https://teh.github.io/personal/order-your-coloured-horse-today/</guid>
-      <description>&lt;!-- raw HTML omitted --&gt;</description>
+      <description>&lt;p class=&#34;aside&#34;&gt;This story isn&#39;t real. I extrapolate a current trend, and then image what the news would have to say 10-20 years from now.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -26,7 +26,7 @@
       <pubDate>Wed, 05 Oct 2016 00:00:00 +0000</pubDate>
       
       <guid>https://teh.github.io/personal/future-news-shadowbook-maps-every-human-with-an-online-presece/</guid>
-      <description>&lt;!-- raw HTML omitted --&gt;</description>
+      <description>&lt;p class=&#34;aside&#34;&gt;This story isn&#39;t real. I extrapolate a current trend, and then image what the news would have to say 10-20 years from now.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -35,7 +35,7 @@
       <pubDate>Fri, 08 Jan 2016 00:00:00 +0000</pubDate>
       
       <guid>https://teh.github.io/personal/future-news-chinese-diplomat-assasinated-by-virus-specific-to-him/</guid>
-      <description>&lt;!-- raw HTML omitted --&gt;</description>
+      <description>&lt;p class=&#34;aside&#34;&gt;This story isn&#39;t real. I extrapolate a current trend, and then image what the news would have to say 10-20 years from now.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -44,7 +44,7 @@
       <pubDate>Fri, 04 Sep 2015 00:00:00 +0000</pubDate>
       
       <guid>https://teh.github.io/personal/future-news-farmbot-famine/</guid>
-      <description>&lt;!-- raw HTML omitted --&gt;</description>
+      <description>&lt;p class=&#34;aside&#34;&gt;This story isn&#39;t real. I extrapolate a current trend, and then image what the news would have to say 10-20 years from now.&lt;/p&gt;</description>
     </item>
     
   </channel>

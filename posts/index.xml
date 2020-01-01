@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on Tom Stuff</title>
+    <title>Posts on Tom</title>
     <link>https://teh.github.io/posts/</link>
-    <description>Recent content in Posts on Tom Stuff</description>
+    <description>Recent content in Posts on Tom</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
     <lastBuildDate>Sun, 04 Jun 2017 00:00:00 +0000</lastBuildDate>
@@ -185,6 +185,29 @@ First, some motivation by showing examples of what will be stored. Here is the g
       <description>&lt;p&gt;I often want to quickly experiment with a Python package without the
 whole virtualenv shenanigans. For that I have an &lt;code&gt;ipython-nix&lt;/code&gt; command
 in my &lt;code&gt;.bashrc&lt;/code&gt;:&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>The four horsemen of design</title>
+      <link>https://teh.github.io/posts/four-horsemen-of-design/</link>
+      <pubDate>Thu, 26 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/four-horsemen-of-design/</guid>
+      <description>&lt;p&gt;As a fairly technical agency we do occasionally need help from our
+fantastic freelance designer to get a good looking product. You can
+read her take on design rules
+&lt;a href=&#34;http://manifesto.co.uk/design-principles-gestalt-white-space-perception/&#34;target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Experience report: Rocket lander in Elm</title>
+      <link>https://teh.github.io/posts/rocket-lander-in-elm/</link>
+      <pubDate>Sun, 15 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/rocket-lander-in-elm/</guid>
+      <description>&lt;p&gt;Writing anything substantial in JavaScript is hard because JavaScript
+lacks many of the tools programmers expect these days, like a coherent
+and strong type system.&lt;/p&gt;</description>
     </item>
     
     <item>
