@@ -30,6 +30,30 @@
     </item>
     
     <item>
+      <title>A lot of websockets in Haskell</title>
+      <link>https://teh.github.io/posts/haskell-websocket-tsung-benchmark/</link>
+      <pubDate>Thu, 05 Nov 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/haskell-websocket-tsung-benchmark/</guid>
+      <description>&lt;p&gt;I really enjoyed reading how the phoenix-framework people managed to
+get to
+&lt;a href=&#34;http://www.phoenixframework.org/v1.0.0/blog/the-road-to-2-million-websocket-connections&#34;target=&#34;_blank&#34;&gt;two million active websocket connections&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I&#39;ve heard some very smart people say that Haskell has an amazing
+runtime with very cheap threads. I have no reason to disbelieve them
+but we thought it&#39;d be fun to see how Haskell fares in a comparable
+setup.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How does a Dokku work?</title>
+      <link>https://teh.github.io/posts/how-does-a-dokku-work/</link>
+      <pubDate>Mon, 19 Jan 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/how-does-a-dokku-work/</guid>
+      <description>&lt;p&gt;There are many implementations for running code in a way pioneered by Heroku which is basically this:&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>Load balancing via iptables</title>
       <link>https://teh.github.io/posts/load-balancing-via-iptables/</link>
       <pubDate>Fri, 09 Mar 2012 00:00:00 +0000</pubDate>

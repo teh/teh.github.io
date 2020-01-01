@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>A lot of websockets in Haskell&nbsp;&ndash;&nbsp;Tom</title><link rel="stylesheet" href="/css/core.min.5781a4bbdb0627948ba3c545f656d12f44a565a9c9e938277d50a58bdba972e96cc33ce5f6ed8edee515d8b5d79e8423.css" integrity="sha384-V4Gku9sGJ5SLo8VF9lbRL0SlZanJ6TgnfVCli9upculswzzl9u2O3uUV2LXXnoQj"><body>
+    <div class="base-body max-width"><section id="header" class="header max-body-width">
+    <div class="header-wrap">
+        <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
+        <div class="header-right-side"><div class="nav-wrap"><div class="nav"><a class="site-tag" href="/tags/">Tags</a></div></div></div>
+    </div>
+</section><div id="content" class="flex-body max-body-width"><section class="article-header">
+    <h1>A lot of websockets in Haskell</h1><p class="article-date">2015-11-05</p></section>
+<article class="markdown-body"><p>I really enjoyed reading how the phoenix-framework people managed to
+get to
+<a href="http://www.phoenixframework.org/v1.0.0/blog/the-road-to-2-million-websocket-connections"target="_blank">two million active websocket connections</a>.</p>
+<p>I've heard some very smart people say that Haskell has an amazing
+runtime with very cheap threads. I have no reason to disbelieve them
+but we thought it'd be fun to see how Haskell fares in a comparable
+setup.</p>
+<h2 id="test-servers">Test servers</h2>
+<p>Unlike the Phoenix people we don't have Rackspace sponsorship so we had
+to resort to the common man's cheap machines: EC2 spot instances. We
+bid $0.10 on two <code>m4.xlarge</code> machines with 16G of RAM and 4 cores
+which usually cost around $0.05 per hour in eu-west.</p>
+<p>We're using Nix to deploy tsung and a very simple Haskell chat program
+that just broadcasts incoming messages to everyone.</p>
+<blockquote>
+<p><strong>tsung</strong> is a tcp/web load generator written in Erlang configured
+through a XML domain-specific language
+(<a href="http://tsung.erlang-projects.org"target="_blank">website</a>).</p>
+</blockquote>
+<p>The core handler of our chat program looks like this (full source <a href="https://github.com/WeAreWizards/haskell-websockets-tsung-benchmark/blob/master/code/src/Main.hs"target="_blank">here</a>):</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">handleWS</span> <span class="ow">::</span> <span class="kt">InChan</span> <span class="kt">ByteString</span> <span class="ow">-&gt;</span> <span class="kt">PendingConnection</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="nb">()</span>
+<span class="nf">handleWS</span> <span class="n">bcast</span> <span class="n">pending</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="n">localChan</span> <span class="ow">&lt;-</span> <span class="n">dupChan</span> <span class="n">bcast</span>
+    <span class="n">connection</span> <span class="ow">&lt;-</span> <span class="n">acceptRequest</span> <span class="n">pending</span>
+
+    <span class="c1">-- Yes, we&#39;re leaking resources here because this forkIO</span>
+    <span class="c1">-- doesn&#39;t terminate when the socket closes :)</span>
+    <span class="n">forkIO</span> <span class="o">$</span> <span class="n">forever</span> <span class="o">$</span> <span class="kr">do</span>
+        <span class="n">message</span> <span class="ow">&lt;-</span> <span class="n">readChan</span> <span class="n">localChan</span>
+        <span class="n">sendTextData</span> <span class="n">connection</span> <span class="n">message</span>
+
+    <span class="c1">-- loop forever</span>
+    <span class="kr">let</span> <span class="n">loop</span> <span class="ow">=</span> <span class="kr">do</span>
+            <span class="kt">Text</span> <span class="n">message</span> <span class="ow">&lt;-</span> <span class="n">receiveDataMessage</span> <span class="n">connection</span>
+            <span class="n">writeChan</span> <span class="n">bcast</span> <span class="n">message</span>
+            <span class="n">loop</span>
+    <span class="n">loop</span>
+</code></pre></div><p>To run the ec2 machines we're using
+<a href="https://nixos.org/nixops/"target="_blank">nixops</a> which also does the spot-price
+bidding for us:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ nixops create <span class="s1">&#39;&lt;nix/test-setup.nix&gt;&#39;</span>
+$ nixops deploy
+</code></pre></div><p>(See
+<a href="https://github.com/WeAreWizards/haskell-websockets-tsung-benchmark/blob/master/nix/test-setup.nix"target="_blank">here</a>
+for the full configuration including kernel tuning).</p>
+<h2 id="tsung-setup">tsung setup</h2>
+<p>Unfortunately I could not get the distributed tsung going: The
+distributed testing uses an Erlang function called <code>slave:start</code> which
+connects through SSH and spawns Erlang on the remote host. This failed
+for reasons I didn't have time to debug.</p>
+<p>But without the distributed testing there's a problem: A single server
+can only open ~65000 connections because ports are limited to 16
+bits. We want more connections though!</p>
+<p>Luckily tsung supports using multiple virtual IP addresses for a
+single network interface out of the box. We went to Amazon and clicked
+&ldquo;Assign new IP&rdquo; a few times to assign more private IPs to our tsung
+box.</p>
+<p>Now we associate the new IPs with our network interface:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ ip addr add 172.31.23.115/20 dev eth0
+$ ip addr add 172.31.23.113/20 dev eth0
+$ ip addr add 172.31.23.114/20 dev eth0
+$ ip addr add 172.31.23.112/20 dev eth0
+$ ip addr add 172.31.18.80/20 dev eth0
+$ ip addr add 172.31.18.81/20 dev eth0
+$ ip addr add 172.31.18.82/20 dev eth0
+$ ip addr add 172.31.18.83/20 dev eth0
+</code></pre></div><p>We have a
+<a href="https://github.com/WeAreWizards/haskell-websockets-tsung-benchmark/blob/master/code/src/tsung-conf.xml"target="_blank">slightly different</a>
+tsung config from the Phoenix people which we copy to our tsung
+box. The differences are using the recently added tsung <code>websockets</code>
+connection type, and to terminate on messages instead of a delay.</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ nixops scp --to tsung-1 code/src/tsung-conf.xml tsung-conf.xml
+code/src/tsung-conf.xml -&gt; root@52.31.104.126:tsung-conf.xml
+tsung-conf.xml                                                  100% <span class="m">1494</span>     1.5KB/s   00:00
+</code></pre></div><h1 id="running-tsung">Running tsung</h1>
+<p>Our Nix config tuned the TCP stack and increased kernel limits, but we
+still need to run <code>ulimit</code> to make sure we're not hitting the default
+limit of 1024 file descriptors:</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">$ nixops ssh tsung-1
+[root@tsung-1:~]# ulimit -n 2000000
+[root@tsung-1:~]# tsung -f tsung-conf.xml start
+Starting Tsung
+Log directory is: /root/.tsung/log/20151104-1622
+</code></pre></div><p>tsung exports some data via a web interface on port 8091. We use an
+extra SSH tunnel so we can access this data on http://127.0.0.1:8091:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ ssh root@tsung-1 -L 8091:127.0.0.1:8091
+</code></pre></div><h2 id="problem-1-the-firewall">Problem 1: The firewall</h2>
+<p>All our Nix boxes are configured with a firewall enabled. This is
+because I start from a template configuration instead of starting from
+scratch.</p>
+<p>The firewall uses connection tracking to make decisions, and
+connection tracking requires memory. When that memory is full the
+<code>dmesg</code> logs look like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">[ 2960.570157] nf_conntrack: table full, dropping packet
+[ 2960.575060] nf_conntrack: table full, dropping packet
+[ 2960.629764] nf_conntrack: table full, dropping packet
+[ 2960.678016] nf_conntrack: table full, dropping packet
+[ 2992.936177] TCP: request_sock_TCP: Possible SYN flooding on port 8080. Sending cookies.  Check SNMP counters.
+[ 2998.005969] net_ratelimit: 364 callbacks suppressed
+</code></pre></div><p>That log also shows that we triggered the kernel's DOS protection
+against SYN flooding. We fixed that by increasing
+<code>net.ipv4.tcp_max_syn_backlog</code> and <code>net.core.somaxconn</code>.</p>
+<p>Now when running tsung we got up to about 120k connections on the
+Haskell websocket box:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[</span>root@websock-server:~<span class="o">]</span><span class="c1"># netstat -ntp  | grep -v TIME_WAIT | wc -l</span>
+ <span class="m">119748</span>
+</code></pre></div><h2 id="problem-2-the-erlang-process-limit">Problem 2: The Erlang process limit</h2>
+<p>But then tsung's web UI would suddenly throw 500 errors and drop all
+connections. Initially we could not figure out what was going on
+because tsung is really slow at writing logs. Waiting for 5 minutes and
+then checking the logs reveals the message:</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">=ERROR REPORT==== 4-Nov-2015::18:03:45 ===
+Too many processes
+</code></pre></div><p>We noticed that tsung supports changing the maximum number of internal
+Erlang processes and we tried this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ tsung -p <span class="m">1250000</span> -f tsung-conf.xml start
+</code></pre></div><p>But no luck - the same problem occurs. Turns out that the <code>-p</code> switch
+doesn't actually work (we filed
+<a href="https://github.com/processone/tsung/issues/136"target="_blank">a bug</a> which was
+fixed within hours. Thanks!).</p>
+<p>We <a href="https://github.com/WeAreWizards/haskell-websockets-tsung-benchmark/blob/master/nix/maxproc.patch"target="_blank">patched</a> tsung ourselves for now.</p>
+<h2 id="some-performance-numbers">Some performance numbers</h2>
+<p>So far we spent most of our time fighting tsung and the slighly
+bizarre Erlang ecosystem. Here's what 100k users look like for CPU and
+memory for the Haskell server:</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+ 1944 root      20   0 7210960 2.656g  22524 S 177.7 16.9   2:58.50 haskell-websock
+</code></pre></div><p>2.6G, not bad! With all problems fixed we ran another test with 256k
+users:</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+ 2252 root      20   0 11.237g 4.714g  22532 S 128.3 30.1   6:58.25 haskell-websock
+</code></pre></div><h2 id="more-addresses">More addresses</h2>
+<p>In order to go higher we needed more IP addresses for tsung. This is
+where we learnt that EC2 limits the number of additional private IPs
+based on the instance type. You'll see a message like this:</p>
+<blockquote>
+<p>eni-5af8fa3d: Number of private addresses will exceed limit.</p>
+</blockquote>
+<p>For m4.xlarge the limit is 15 addresses so we got another 6:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">ip addr add 172.31.26.100/20  dev eth0
+ip addr add 172.31.26.99/20  dev eth0
+ip addr add 172.31.18.106/20  dev eth0
+ip addr add 172.31.30.220/20  dev eth0
+ip addr add 172.31.18.240/20  dev eth0
+ip addr add 172.31.30.188/20  dev eth0
+</code></pre></div><p>With 15 addresses in total we should get close to one million connections:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="o">&gt;&gt;</span><span class="o">&gt;</span> <span class="mi">15</span> <span class="o">*</span> <span class="mi">64000</span>
+<span class="mi">960000</span>
+</code></pre></div><p>But tsung needs more memory than our Haskell server and died at ~500k
+connections:</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">/run/current-system/sw/bin/tsung: line 60: 29721 Killed                  [...]
+</code></pre></div><p>The Haskell server was still running quite comfortably below 10G at
+500k connections:</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+ 2320 root      20   0 16.879g 9.395g  22300 S   0.0 59.9  14:38.75 haskell-websock
+</code></pre></div><p>That was certainly a fun afternoon! Time to clean up:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ nixops destroy
+warning: are you sure you want to destroy EC2 machine ‘tsung-1’? <span class="o">(</span>y/N<span class="o">)</span> y
+warning: are you sure you want to destroy EC2 machine ‘websock-server’? <span class="o">(</span>y/N<span class="o">)</span> y
+</code></pre></div><p>The whole experiment took ~2.5 hours and cost us a grand total of
+$0.25. To get to 4x the connections (two million) we'd need two
+m4.4xlarge or r2.2xlarge instances but that's for another day.</p>
+<h2 id="graphs">Graphs</h2>
+<p>Our graphs show very nicely that we add a bit more than 1000
+connections a second, and that the connection count follows the user
+count closely. I.e. there is no delay from the Haskell server.</p>
+<p>Some unscientific testing also showed that propagating a message to
+all 256k clients takes 10-50 milliseconds, so the 2 seconds quoted by
+the Phoenix team for two million users sounds about right.</p>
+<p>256k connections:</p>
+<img src="/images/tsung-256k.png">
+<p>~500k connections (tsung died):</p>
+<img src="/images/tsung-960k.png"></article><section class="article-labels"><a class="article-tag li" href=/tags/devops/><span class="hashtag">#</span>Devops</a></section><section class="article-navigation"><p><a class="link" href="/posts/ipython-nix/"><span class="li"></span>Quick IPython shells with nix-shell</a></p><p><a class="link" href="/posts/four-horsemen-of-design/"><span class="li"></span>The four horsemen of design</a class="link">
+    </p></section></div><section id="footer" class="footer max-body-width"><p>Tom</p>
+<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
+</body>
+
+</html>
