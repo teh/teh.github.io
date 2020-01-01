@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Purescript&#39;s c&#43;&#43; backend&nbsp;&ndash;&nbsp;Tom Stuff</title><link rel="stylesheet" href="/css/core.min.b36455a448f1b345e1de7ecfba4ebc7a459dc7297b9400f493511ce22e4017ae72a67d75b91ce89a5f95968e77e1380d.css" integrity="sha384-s2RVpEjxs0Xh3n7Puk68ekWdxyl7lAD0k1Ec4i5AF65ypn11uRzoml&#43;Vlo534TgN"><body>
+    <div class="base-body max-width"><section id="header" class="header max-body-width">
+    <div class="header-wrap">
+        <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom Stuff</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
+        <div class="header-right-side"></div>
+    </div>
+</section><div id="content" class="flex-body max-body-width"><section class="article-header">
+    <h1>Purescript's c++ backend</h1><p class="article-date">2016-11-10</p></section>
+<article class="markdown-body"><p><a href="http://www.purescript.org/"target="_blank">Purescript</a> describes itself like so:</p>
+<blockquote>
+<p>PureScript is a small strongly typed programming language that compiles to JavaScript.</p>
+</blockquote>
+<p>It's written in Haskell and borrows many concepts as well. It's not the same though, and one distinguishing feature is that it compiles down to a small imperative core. It's relatively easy to implement new backends for this core - one of them is in c++ 11.</p>
+<p>The c++ backend has virtually no ecosystem and running it still requires some manual labour.</p>
+<p>First we clone the repository:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ git clone https://github.com/pure11/pure11
+$ <span class="nb">cd</span> pure11
+</code></pre></div><p>There is a <code>stack.yml</code> so you can use <a href="https://docs.haskellstack.org/en/stable/README/"target="_blank">stack</a> to build. I use NixOS 16.09:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ cabal2nix . --shell &gt; shell.nix
+$ nix-shell
+$ cabal build
+</code></pre></div><p>The build will create a <code>pcc</code> binary. When you run it without inputs it will create a <code>Makefile</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ dist/build/pcc/pcc
+Generating Makefile...
+pcc executable location: /home/tom/src/pure11/dist/build/pcc/pcc
+Done
+Run <span class="s1">&#39;make&#39;</span> or <span class="s1">&#39;make release&#39;</span> to build an optimized release build.
+The resulting binary executable will be located in output/bin <span class="o">(</span>by default<span class="o">)</span>.
+</code></pre></div><p><code>pure11</code> doesn't have a package manager so we need to clone a few c++ specific packages by hand:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mkdir packages
+<span class="nb">cd</span> packages
+
+git clone https://github.com/pure11/purescript-prelude
+git clone https://github.com/pure11/purescript-eff
+git clone https://github.com/pure11/purescript-console
+git clone https://github.com/pure11/purescript-control
+</code></pre></div><p>We create a simple example program in <code>src/Main.purs</code>:</p>
+<pre><code class="language-purescript" data-lang="purescript">module Main where
+
+import Control.Monad.Eff.Console (log, CONSOLE)
+import Prelude (Unit)
+import Control.Monad.Eff (Eff)
+
+main :: forall e. Eff ( console :: CONSOLE | e ) Unit
+main = log &quot;hello from pure11&quot;
+</code></pre><p>and run <code>make</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ make
+Compiling Data.NaturalTransformation
+Compiling Data.Show
+...
+Creating output/Main/Main.o
+...
+Linking output/bin/main
+make<span class="o">[</span>1<span class="o">]</span>: Leaving directory <span class="s1">&#39;/home/tom/src/pure11&#39;</span>
+</code></pre></div><p>which we can run:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ output/bin/main
+hello from pure11
+</code></pre></div><h2 id="notes">Notes</h2>
+<p>This isn't anywhere close to ready for production, but it's amazing that this works in the first place.</p>
+<p>In theory I can now use all the <a href="https://pursuit.purescript.org/"target="_blank">Purescript libraries</a> that aren't targeting JavaScript explicitly. I say &ldquo;in theory&rdquo; because I haven't actually tried this.</p>
+<p>In the near future Purescript will gain the ability to dump an <a href="https://github.com/purescript/purescript/issues/711"target="_blank">imperative core</a> which will make it even easier to write backends.</p>
+<p>I can totally imagine a world where people write the more important parts of their apps in Purescript, and then compile down whatever language they use in their own ecosystem.</p></article><section class="article-labels"><a class="article-tag li" href=/tags/purescript/><span class="hashtag">#</span>Purescript</a></section><section class="article-navigation"><p><a class="link" href="/posts/running-your-own-openvpn/"><span class="li"></span>Running your own OpenVPN</a></p><p><a class="link" href="/posts/ipython-shells-with-nix-updated/"><span class="li"></span>IPython shells with nix, updated</a class="link">
+    </p></section></div><section id="footer" class="footer max-body-width"><p>Tom Stuff</p>
+<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
+</body>
+
+</html>

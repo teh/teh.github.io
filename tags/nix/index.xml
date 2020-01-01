@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nix on Tom Stuff</title>
+    <link>https://teh.github.io/tags/nix/</link>
+    <description>Recent content in Nix on Tom Stuff</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-gb</language>
+    <lastBuildDate>Sun, 04 Jun 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://teh.github.io/tags/nix/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Kernel Self Protection</title>
+      <link>https://teh.github.io/posts/kernel-self-protection/</link>
+      <pubDate>Sun, 04 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/kernel-self-protection/</guid>
+      <description>&lt;p&gt;grsecrurity &lt;a href=&#34;https://grsecurity.net/passing_the_baton_faq.php&#34;target=&#34;_blank&#34;&gt;have stopped releasing&lt;/a&gt; their unstable kernel patches, leaving a bit of a void if you want to add those layers of protection to your kernel.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Nix hackathon March 2017</title>
+      <link>https://teh.github.io/posts/nix-hackathon-march-2017/</link>
+      <pubDate>Fri, 17 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/nix-hackathon-march-2017/</guid>
+      <description>&lt;p&gt;Earlier this month &lt;a href=&#34;https://smarkets.com/&#34;target=&#34;_blank&#34;&gt;Smarkets&lt;/a&gt; was being awesome and hosted our 2nd Nix hackathon. We had a fantasic crowd of smart people, and the Smarkets office was downright amazing. We had standing desks with extra monitors. The coffee was so thick that it was still strong in homeopathic doses. We even had smarties on tap.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>IPython shells with nix, updated</title>
+      <link>https://teh.github.io/posts/ipython-shells-with-nix-updated/</link>
+      <pubDate>Thu, 03 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/ipython-shells-with-nix-updated/</guid>
+      <description>&lt;p&gt;I&#39;ve written about IPython shells with Nix &lt;a href=&#34;https://theshortlog.com/2016/02/11/ipython-nix/&#34;target=&#34;_blank&#34;&gt;previously&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>NixOS security-updates update</title>
+      <link>https://teh.github.io/posts/nix-security-updates-update/</link>
+      <pubDate>Sat, 01 Oct 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/nix-security-updates-update/</guid>
+      <description>&lt;p&gt;This weekend Nicolas Pierron (&lt;a href=&#34;http://github.com/nbp&#34;target=&#34;_blank&#34;&gt;nbp&lt;/a&gt; on GitHub) came to London for a NixOS hackathon. He&#39;s been working on improving security updates in NixOS for a while. He&#39;s the author of the &lt;a href=&#34;http://nixos.org/nixos/manual/index.html#sec-modularity&#34;target=&#34;_blank&#34;&gt;NixOS module system&lt;/a&gt; amongst other things. He has a successful track record of complex, tree-wide changes so if anyone can nail this, it&#39;s him.&lt;/p&gt;
+&lt;p&gt;The main output of our weekend is this blog post with his ideas.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Nginx in NixOS 16.09</title>
+      <link>https://teh.github.io/posts/nginx-in-nixos-16-09/</link>
+      <pubDate>Sun, 11 Sep 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/nginx-in-nixos-16-09/</guid>
+      <description>&lt;p&gt;The beta release of &lt;a href=&#34;http://lists.science.uu.nl/pipermail/nix-dev/2016-September/021658.html&#34;target=&#34;_blank&#34;&gt;NixOS 16.09&lt;/a&gt; comes with a very cool config generator for your NGINX configuration. It makes it easy to:&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Prepare NixOS disk image for another computer</title>
+      <link>https://teh.github.io/posts/prepare-nixos-disk-image-for-another-computer/</link>
+      <pubDate>Wed, 29 Jun 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/prepare-nixos-disk-image-for-another-computer/</guid>
+      <description>&lt;p&gt;When installing my deep-learning box I didn&#39;t have a monitor so I had to blast the disk-image straight onto a disk with &lt;code&gt;dd&lt;/code&gt;.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Quick IPython shells with nix-shell</title>
+      <link>https://teh.github.io/posts/ipython-nix/</link>
+      <pubDate>Thu, 11 Feb 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/ipython-nix/</guid>
+      <description>&lt;p&gt;I often want to quickly experiment with a Python package without the
+whole virtualenv shenanigans. For that I have an &lt;code&gt;ipython-nix&lt;/code&gt; command
+in my &lt;code&gt;.bashrc&lt;/code&gt;:&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

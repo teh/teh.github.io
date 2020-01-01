@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Deep-learning Python environment with Nix&nbsp;&ndash;&nbsp;Tom Stuff</title><link rel="stylesheet" href="/css/core.min.b36455a448f1b345e1de7ecfba4ebc7a459dc7297b9400f493511ce22e4017ae72a67d75b91ce89a5f95968e77e1380d.css" integrity="sha384-s2RVpEjxs0Xh3n7Puk68ekWdxyl7lAD0k1Ec4i5AF65ypn11uRzoml&#43;Vlo534TgN"><body>
+    <div class="base-body max-width"><section id="header" class="header max-body-width">
+    <div class="header-wrap">
+        <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom Stuff</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
+        <div class="header-right-side"></div>
+    </div>
+</section><div id="content" class="flex-body max-body-width"><section class="article-header">
+    <h1>Deep-learning Python environment with Nix</h1><p class="article-date">2016-08-10</p></section>
+<article class="markdown-body"><p>Getting the deep learning environment with all NVidia libaries set up is a bit fiddly. Thankfully I can lean on Nix for that as well.</p>
+<p>I have a package definition like this (<code>dl.nix</code>):</p>
+<div class="highlight"><pre class="chroma"><code class="language-nix" data-lang="nix"><span class="p">{</span> <span class="n">python</span><span class="o">,</span> <span class="n">pythonPackages</span><span class="o">,</span> <span class="n">gcc</span><span class="o">,</span> <span class="n">cudatoolkit75</span><span class="o">,</span> <span class="n">cudnn5_cudatoolkit75</span> <span class="p">}:</span>
+
+<span class="n">python</span><span class="o">.</span><span class="n">buildEnv</span><span class="o">.</span><span class="n">override</span> <span class="p">{</span>
+  <span class="n">extraLibs</span> <span class="o">=</span> <span class="k">with</span> <span class="n">pythonPackages</span><span class="p">;</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">Keras</span><span class="o">.</span><span class="n">override</span> <span class="p">{</span> <span class="n">propagatedBuildInputs</span> <span class="o">=</span> <span class="p">[</span> <span class="n">Theano-cuda</span> <span class="n">six</span> <span class="n">pyyaml</span> <span class="n">future</span> <span class="p">]</span><span class="p">;</span>  <span class="p">}</span><span class="p">)</span>
+    <span class="n">ipython</span>
+    <span class="n">notebook</span>
+  <span class="p">]</span><span class="p">;</span>
+  <span class="n">extraPaths</span> <span class="o">=</span> <span class="p">[</span> <span class="n">gcc</span> <span class="n">cudatoolkit75</span> <span class="n">cudnn5_cudatoolkit75</span> <span class="p">]</span><span class="p">;</span>
+  <span class="n">ignoreCollisions</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>(Note that this needs <a href="https://github.com/NixOS/nixpkgs/pull/18273"target="_blank">this branch</a> in your nixpkgs. I'm hoping it'll be merged soon.)</p>
+<p>With that in place it's trivial to drop into a nix-shell that then has a python to run your nix code:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ nix-shell -p <span class="s2">&#34;callPackage ./dl.nix {}&#34;</span>
+</code></pre></div><p>I'm also still on Theano rather than Tensorflow because I find it easier to debug. Tensorflow available in nixpkgs though if you prefer that.</p></article><section class="article-labels"><a class="article-tag li" href=/tags/ml/><span class="hashtag">#</span>ML</a></section><section class="article-navigation"><p><a class="link" href="/posts/3d-printing-a-lens-cap/"><span class="li"></span>3d-printing a lens cap</a></p><p><a class="link" href="/posts/prepare-nixos-disk-image-for-another-computer/"><span class="li"></span>Prepare NixOS disk image for another computer</a class="link">
+    </p></section></div><section id="footer" class="footer max-body-width"><p>Tom Stuff</p>
+<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
+</body>
+
+</html>

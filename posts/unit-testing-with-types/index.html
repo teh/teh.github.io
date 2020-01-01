@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Unit testing with types&nbsp;&ndash;&nbsp;Tom Stuff</title><link rel="stylesheet" href="/css/core.min.b36455a448f1b345e1de7ecfba4ebc7a459dc7297b9400f493511ce22e4017ae72a67d75b91ce89a5f95968e77e1380d.css" integrity="sha384-s2RVpEjxs0Xh3n7Puk68ekWdxyl7lAD0k1Ec4i5AF65ypn11uRzoml&#43;Vlo534TgN"><body>
+    <div class="base-body max-width"><section id="header" class="header max-body-width">
+    <div class="header-wrap">
+        <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom Stuff</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
+        <div class="header-right-side"></div>
+    </div>
+</section><div id="content" class="flex-body max-body-width"><section class="article-header">
+    <h1>Unit testing with types</h1><p class="article-date">2016-04-22</p></section>
+<article class="markdown-body"><p>I'm an incredibly sloppy programmer, and I lean on the compiler heavily to help me not be stupid. One of my favourite things is to use types to enforce properties of data.</p>
+<p>The idea is to create a type that can only be constructed with a &ldquo;smart&rdquo; constructor that checks for validity on creation. In code:</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell"><span class="kr">module</span> <span class="nn">GreenThing</span> <span class="p">(</span><span class="kt">GreenThing</span><span class="p">,</span> <span class="nf">makeGreenThing</span><span class="p">)</span> <span class="kr">where</span>
+
+<span class="kr">newtype</span> <span class="kt">GreenThing</span> <span class="ow">=</span> <span class="kt">GreenThing</span> <span class="kt">String</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Show</span><span class="p">,</span> <span class="kt">Eq</span><span class="p">)</span>
+
+<span class="nf">makeGreenThing</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="kt">GreenThing</span>
+<span class="nf">makeGreenThing</span> <span class="n">s</span> <span class="ow">=</span> <span class="kr">case</span> <span class="n">s</span> <span class="kr">of</span>
+  <span class="s">&#34;</span><span class="s">green</span><span class="s">&#34;</span> <span class="ow">-&gt;</span> <span class="kt">Just</span> <span class="p">(</span><span class="kt">GreenThing</span> <span class="s">&#34;</span><span class="s">green</span><span class="s">&#34;</span><span class="p">)</span>
+  <span class="s">&#34;</span><span class="s">lime -&gt; Just (GreenThing </span><span class="s">&#34;</span><span class="n">lime</span><span class="s">&#34;</span><span class="s">)
+</span><span class="s">  </span><span class="s">&#34;</span><span class="n">moss</span> <span class="ow">-&gt;</span> <span class="kt">Just</span> <span class="p">(</span><span class="kt">GreenThing</span> <span class="s">&#34;</span><span class="s">moss</span><span class="s">&#34;</span><span class="p">)</span>
+   <span class="kr">_</span> <span class="ow">-&gt;</span> <span class="kt">Nothing</span>
+</code></pre></div><p>We're not exporting the <em>constructor</em> <code>GreenThing</code>, only the <em>type</em> <code>GreenThing</code>. To get a value of type <code>GreenThing</code> I need to go through <code>makeGreenThing</code> which makes it impossible to create an invalid value.</p>
+<p>With this setup I <strong>know</strong> that <code>GreenThing</code> contains something green, no matter where I use it. This frees my mind for other tasks.</p>
+<p>I use this in place of unit tests: Every time I have a new entity I create a type with a smart constructor, test it a bit in the repl, and then use it without ever writing a single test. It works surprisingly well!</p></article><section class="article-labels"><a class="article-tag li" href=/tags/haskell/><span class="hashtag">#</span>Haskell</a></section><section class="article-navigation"><p><a class="link" href="/posts/prepare-nixos-disk-image-for-another-computer/"><span class="li"></span>Prepare NixOS disk image for another computer</a></p><p><a class="link" href="/posts/ipython-nix/"><span class="li"></span>Quick IPython shells with nix-shell</a class="link">
+    </p></section></div><section id="footer" class="footer max-body-width"><p>Tom Stuff</p>
+<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
+</body>
+
+</html>

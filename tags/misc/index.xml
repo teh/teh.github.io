@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Misc on Tom Stuff</title>
+    <link>https://teh.github.io/tags/misc/</link>
+    <description>Recent content in Misc on Tom Stuff</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-gb</language>
+    <lastBuildDate>Thu, 11 Aug 2016 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://teh.github.io/tags/misc/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>3d-printing a lens cap</title>
+      <link>https://teh.github.io/posts/3d-printing-a-lens-cap/</link>
+      <pubDate>Thu, 11 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/3d-printing-a-lens-cap/</guid>
+      <description>&lt;p&gt;While phone cameras are getting really amazing I still like my old Sony because it allows me to fiddle with exposure etc.; It has a very good sensor and lens.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Stuff I learned - 3</title>
+      <link>https://teh.github.io/posts/stuff-i-learned-3/</link>
+      <pubDate>Tue, 22 May 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/stuff-i-learned-3/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Stuff I learned - 2</title>
+      <link>https://teh.github.io/posts/stuff-i-learned-2/</link>
+      <pubDate>Tue, 17 Apr 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/stuff-i-learned-2/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Stuff I learned - 1</title>
+      <link>https://teh.github.io/posts/stuff-i-learned-1/</link>
+      <pubDate>Fri, 09 Mar 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/stuff-i-learned-1/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

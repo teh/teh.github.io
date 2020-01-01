@@ -1,0 +1,9 @@
+/* code font is too large by default */
+#container main article pre code {
+    font-size: 0.7em;
+}
+
+#container main article pre {
+    padding: 10px;
+    line-height: 1.1;
+}
