@@ -10,7 +10,7 @@
 </section><div id="content" class="flex-body max-body-width"><section class="article-header">
     <h1>Replacing types in Postgraphile</h1><p class="article-date">2020-01-05</p></section>
 <article class="markdown-body"><p><a href="https://www.graphile.org/postgraphile/introduction/"target="_blank">Postgraphile</a> comes with many useful defaults out of the box, but occassionally it's useful to replace the default types.</p>
-<p>To replace a type we first need the type's <code>oid</code>. In a shell do e.g. this:</p>
+<p>To replace a type we first need the type's <code>oid</code>. In a psql shell do e.g. this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="n">tom</span><span class="o">=</span><span class="o">#</span> <span class="k">select</span> <span class="n">typname</span><span class="p">,</span> <span class="n">oid</span> <span class="k">from</span> <span class="n">pg_type</span> <span class="k">where</span> <span class="n">typname</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="s1">timestamp</span><span class="s1">&#39;</span><span class="p">;</span>
   <span class="n">typname</span>  <span class="o">|</span> <span class="n">oid</span>
 <span class="c1">-----------+------
@@ -21,7 +21,7 @@
 the <code>timestamp</code> type: Instead of the default ISO 8601 string we return a GraphQL Object with
 a new field, <code>human</code>, that renders e.g. as &ldquo;2 days ago&rdquo;.</p>
 <p>The actual replacing happens by hooking into the <code>build</code> phase of the schema builder.
-The code below should be faily self-explanatory. The most interesting thing IMO is that
+The code below should be faily self-explanatory. The most interesting thing IMO is, that
 we can implement the resolver directly in the type.</p>
 <div class="highlight"><pre class="chroma"><code class="language-typescript" data-lang="typescript"><span class="kr">import</span> <span class="p">{</span> <span class="nx">SchemaBuilder</span> <span class="p">}</span> <span class="nx">from</span> <span class="s2">&#34;postgraphile&#34;</span><span class="p">;</span>
 <span class="kr">import</span> <span class="nx">moment</span> <span class="nx">from</span> <span class="s2">&#34;moment&#34;</span><span class="p">;</span>
