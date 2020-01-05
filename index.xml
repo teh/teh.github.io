@@ -17,7 +17,7 @@
       <pubDate>Sun, 05 Jan 2020 00:00:00 +0000</pubDate>
       
       <guid>https://teh.github.io/posts/postgraphile-replace-type/</guid>
-      <description>&lt;p&gt;&lt;a href=&#34;https://www.graphile.org/postgraphile/introduction/&#34;target=&#34;_blank&#34;&gt;Postgraphile&lt;/a&gt; comes with many useful defaults out of the box, but occassionally it&#39;s useful to replace the default types.&lt;/p&gt;</description>
+      <description>&lt;p&gt;&lt;a href=&#34;https://www.graphile.org/postgraphile/introduction/&#34;target=&#34;_blank&#34;&gt;Postgraphile&lt;/a&gt; comes with many good defaults out of the box, but occassionally it&#39;s necessary to replace a default type.&lt;/p&gt;</description>
     </item>
     
     <item>
