@@ -10,13 +10,22 @@
 </section><div id="content" class="flex-body max-body-width"><section class="article-header">
     <h1>Replacing types in Postgraphile</h1><p class="article-date">2020-01-05</p></section>
 <article class="markdown-body"><p><a href="https://www.graphile.org/postgraphile/introduction/"target="_blank">Postgraphile</a> comes with many good defaults out of the box, but occassionally it's necessary to replace a default type.</p>
-<p>To replace a type we first need the type's <code>oid</code>. In a psql shell do e.g. this:</p>
+<hr>
+<p><strong>Update 6th Jan</strong>: <a href="">Benji</a> suggested in discord that it's better to use the API to query
+the type OID like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-typescript" data-lang="typescript"><span class="kr">const</span> <span class="nx">timestampOid</span> <span class="o">=</span> <span class="nx">build</span><span class="p">.</span><span class="nx">pgIntrospectionResultsByKind</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span>
+    <span class="p">(</span><span class="nx">type</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">type</span><span class="p">.</span><span class="nx">namespaceName</span> <span class="o">===</span> <span class="s1">&#39;pg_catalog&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">;</span>
+    <span class="p">}</span><span class="p">)</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+</code></pre></div><hr>
+<p>(<strong>Old</strong>) To replace a type we first need the type's <code>oid</code>. In a psql shell do e.g. this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="n">tom</span><span class="o">=</span><span class="o">#</span> <span class="k">select</span> <span class="n">typname</span><span class="p">,</span> <span class="n">oid</span> <span class="k">from</span> <span class="n">pg_type</span> <span class="k">where</span> <span class="n">typname</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="s1">timestamp</span><span class="s1">&#39;</span><span class="p">;</span>
   <span class="n">typname</span>  <span class="o">|</span> <span class="n">oid</span>
 <span class="c1">-----------+------
 </span><span class="c1"></span> <span class="k">timestamp</span> <span class="o">|</span> <span class="mi">1114</span>
 <span class="p">(</span><span class="mi">1</span> <span class="k">row</span><span class="p">)</span>
 </code></pre></div><p>We will need the oid <code>1114</code> later.</p>
+<hr>
 <p>In our toy example below (make sure you check timezones work as expected if using it!) we replace
 the <code>timestamp</code> type: Instead of the default ISO 8601 string we return a GraphQL Object with
 a new field, <code>human</code>, that renders e.g. as &ldquo;2 days ago&rdquo;.</p>
@@ -29,15 +38,20 @@ we can implement the resolver directly in the type.</p>
 <span class="kr">module</span><span class="nx">.exports</span> <span class="o">=</span> <span class="p">(</span>
     <span class="nx">builder</span>: <span class="kt">SchemaBuilder</span>
 <span class="p">)</span> <span class="o">=</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="nx">builder</span><span class="p">.</span><span class="nx">hook</span><span class="p">(</span><span class="s2">&#34;build&#34;</span><span class="p">,</span> <span class="p">(</span><span class="nx">build</span><span class="p">)</span> <span class="o">=</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="nx">builder</span><span class="p">.</span><span class="nx">hook</span><span class="p">(</span><span class="s2">&#34;build&#34;</span><span class="p">,</span> <span class="p">(</span><span class="nx">build</span>: <span class="kt">Build</span><span class="p">)</span> <span class="o">=</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="c1">// Use introspection API to retrieve type OID
+</span><span class="c1"></span>        <span class="kr">const</span> <span class="nx">timestampOid</span> <span class="o">=</span> <span class="nx">build</span><span class="p">.</span><span class="nx">pgIntrospectionResultsByKind</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span>
+            <span class="p">(</span><span class="nx">type</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=</span><span class="o">&gt;</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">type</span><span class="p">.</span><span class="nx">namespaceName</span> <span class="o">===</span> <span class="s1">&#39;pg_catalog&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">;</span>
+            <span class="p">}</span><span class="p">)</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
         <span class="nx">build</span><span class="p">.</span><span class="nx">pgRegisterGqlTypeByTypeId</span><span class="p">(</span>
-            <span class="s2">&#34;1114&#34;</span><span class="p">,</span>
+            <span class="nx">timestampOid</span><span class="p">,</span>
             <span class="p">(</span><span class="p">)</span> <span class="o">=</span><span class="o">&gt;</span> <span class="k">new</span> <span class="nx">build</span><span class="p">.</span><span class="nx">graphql</span><span class="p">.</span><span class="nx">GraphQLObjectType</span><span class="p">(</span><span class="p">{</span>
                 <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Datetime&#39;</span><span class="p">,</span>
                 <span class="nx">fields</span><span class="o">:</span> <span class="p">{</span>
                   <span class="nx">human</span><span class="o">:</span> <span class="p">{</span>
                       <span class="nx">type</span>: <span class="kt">build.graphql.GraphQLNonNull</span><span class="p">(</span><span class="nx">build</span><span class="p">.</span><span class="nx">graphql</span><span class="p">.</span><span class="nx">GraphQLString</span><span class="p">)</span><span class="p">,</span>
-                      <span class="nx">resolve</span><span class="o">:</span> <span class="p">(</span><span class="nx">parent</span><span class="p">)</span> <span class="o">=</span><span class="o">&gt;</span> <span class="p">{</span>
+                      <span class="nx">resolve</span><span class="o">:</span> <span class="p">(</span><span class="nx">parent</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">=</span><span class="o">&gt;</span> <span class="p">{</span>
                           <span class="k">return</span> <span class="nx">moment</span><span class="p">(</span><span class="nx">parent</span><span class="p">)</span><span class="p">.</span><span class="nx">fromNow</span><span class="p">(</span><span class="p">)</span><span class="p">;</span>
                       <span class="p">}</span>
                     <span class="p">}</span><span class="p">,</span>
