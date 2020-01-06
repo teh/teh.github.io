@@ -11,7 +11,7 @@
     <h1>Replacing types in Postgraphile</h1><p class="article-date">2020-01-05</p></section>
 <article class="markdown-body"><p><a href="https://www.graphile.org/postgraphile/introduction/"target="_blank">Postgraphile</a> comes with many good defaults out of the box, but occassionally it's necessary to replace a default type.</p>
 <hr>
-<p><strong>Update 6th Jan</strong>: <a href="">Benji</a> suggested in discord that it's better to use the API to query
+<p><strong>Update 6th Jan</strong>: <a href="https://github.com/benjie"target="_blank">Benji</a> suggested in discord that it's better to use the API to query
 the type OID like this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-typescript" data-lang="typescript"><span class="kr">const</span> <span class="nx">timestampOid</span> <span class="o">=</span> <span class="nx">build</span><span class="p">.</span><span class="nx">pgIntrospectionResultsByKind</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span>
     <span class="p">(</span><span class="nx">type</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=</span><span class="o">&gt;</span> <span class="p">{</span>
