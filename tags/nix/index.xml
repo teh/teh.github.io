@@ -35,7 +35,7 @@
       <pubDate>Thu, 03 Nov 2016 00:00:00 +0000</pubDate>
       
       <guid>https://teh.github.io/posts/ipython-shells-with-nix-updated/</guid>
-      <description>&lt;p&gt;I&#39;ve written about IPython shells with Nix &lt;a href=&#34;https://theshortlog.com/2016/02/11/ipython-nix/&#34;target=&#34;_blank&#34;&gt;previously&lt;/a&gt;.&lt;/p&gt;</description>
+      <description>&lt;p&gt;I&amp;rsquo;ve written about IPython shells with Nix &lt;a href=&#34;https://theshortlog.com/2016/02/11/ipython-nix/&#34;target=&#34;_blank&#34;&gt;previously&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -44,7 +44,7 @@
       <pubDate>Sat, 01 Oct 2016 00:00:00 +0000</pubDate>
       
       <guid>https://teh.github.io/posts/nix-security-updates-update/</guid>
-      <description>&lt;p&gt;This weekend Nicolas Pierron (&lt;a href=&#34;http://github.com/nbp&#34;target=&#34;_blank&#34;&gt;nbp&lt;/a&gt; on GitHub) came to London for a NixOS hackathon. He&#39;s been working on improving security updates in NixOS for a while. He&#39;s the author of the &lt;a href=&#34;http://nixos.org/nixos/manual/index.html#sec-modularity&#34;target=&#34;_blank&#34;&gt;NixOS module system&lt;/a&gt; amongst other things. He has a successful track record of complex, tree-wide changes so if anyone can nail this, it&#39;s him.&lt;/p&gt;
+      <description>&lt;p&gt;This weekend Nicolas Pierron (&lt;a href=&#34;http://github.com/nbp&#34;target=&#34;_blank&#34;&gt;nbp&lt;/a&gt; on GitHub) came to London for a NixOS hackathon. He&amp;rsquo;s been working on improving security updates in NixOS for a while. He&amp;rsquo;s the author of the &lt;a href=&#34;http://nixos.org/nixos/manual/index.html#sec-modularity&#34;target=&#34;_blank&#34;&gt;NixOS module system&lt;/a&gt; amongst other things. He has a successful track record of complex, tree-wide changes so if anyone can nail this, it&amp;rsquo;s him.&lt;/p&gt;
 &lt;p&gt;The main output of our weekend is this blog post with his ideas.&lt;/p&gt;</description>
     </item>
     
@@ -63,7 +63,7 @@
       <pubDate>Wed, 29 Jun 2016 00:00:00 +0000</pubDate>
       
       <guid>https://teh.github.io/posts/prepare-nixos-disk-image-for-another-computer/</guid>
-      <description>&lt;p&gt;When installing my deep-learning box I didn&#39;t have a monitor so I had to blast the disk-image straight onto a disk with &lt;code&gt;dd&lt;/code&gt;.&lt;/p&gt;</description>
+      <description>&lt;p&gt;When installing my deep-learning box I didn&amp;rsquo;t have a monitor so I had to blast the disk-image straight onto a disk with &lt;code&gt;dd&lt;/code&gt;.&lt;/p&gt;</description>
     </item>
     
     <item>

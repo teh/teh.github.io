@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.63.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>A lot of websockets in Haskell&nbsp;&ndash;&nbsp;Tom&#39;s Blog</title><link rel="stylesheet" href="/css/core.min.7e47878394f03603824473a82c20e6c1cd4cf4cbc0aaa9d7b2ca0f8b95ff7c4e9a8fedf312097f0b83f1adde371c65b9.css" integrity="sha384-fkeHg5TwNgOCRHOoLCDmwc1M9MvAqqnXssoPi5X/fE6aj&#43;3zEgl/C4Pxrd43HGW5"><body>
+<meta name="supported-color-schemes" content="light dark"><title>A lot of websockets in Haskell&nbsp;&ndash;&nbsp;Tom&#39;s Blog</title><link rel="stylesheet" href="/css/core.min.4d606001d0ab7504ebb059c845818cd08b97dd32bfcea8417952386b9836caeea2c016ab13442520e139fdf382664f47.css" integrity="sha384-TWBgAdCrdQTrsFnIRYGM0IuX3TK/zqhBeVI4a5g2yu6iwBarE0QlIOE5/fOCZk9H"><body>
     <div class="base-body max-width"><section id="header" class="header max-body-width">
     <div class="header-wrap">
         <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom&#39;s Blog</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
@@ -12,17 +12,17 @@
 <article class="markdown-body"><p>I really enjoyed reading how the phoenix-framework people managed to
 get to
 <a href="http://www.phoenixframework.org/v1.0.0/blog/the-road-to-2-million-websocket-connections"target="_blank">two million active websocket connections</a>.</p>
-<p>I've heard some very smart people say that Haskell has an amazing
+<p>I&rsquo;ve heard some very smart people say that Haskell has an amazing
 runtime with very cheap threads. I have no reason to disbelieve them
-but we thought it'd be fun to see how Haskell fares in a comparable
+but we thought it&rsquo;d be fun to see how Haskell fares in a comparable
 setup.</p>
 <p><a href="https://news.ycombinator.com/item?id=10513445"target="_blank">(Also see discussion on HN)</a></p>
 <h2 id="test-servers">Test servers</h2>
-<p>Unlike the Phoenix people we don't have Rackspace sponsorship so we had
-to resort to the common man's cheap machines: EC2 spot instances. We
+<p>Unlike the Phoenix people we don&rsquo;t have Rackspace sponsorship so we had
+to resort to the common man&rsquo;s cheap machines: EC2 spot instances. We
 bid $0.10 on two <code>m4.xlarge</code> machines with 16G of RAM and 4 cores
 which usually cost around $0.05 per hour in eu-west.</p>
-<p>We're using Nix to deploy tsung and a very simple Haskell chat program
+<p>We&rsquo;re using Nix to deploy tsung and a very simple Haskell chat program
 that just broadcasts incoming messages to everyone.</p>
 <blockquote>
 <p><strong>tsung</strong> is a tcp/web load generator written in Erlang configured
@@ -47,7 +47,7 @@ through a XML domain-specific language
             <span class="n">writeChan</span> <span class="n">bcast</span> <span class="n">message</span>
             <span class="n">loop</span>
     <span class="n">loop</span>
-</code></pre></div><p>To run the ec2 machines we're using
+</code></pre></div><p>To run the ec2 machines we&rsquo;re using
 <a href="https://nixos.org/nixops/"target="_blank">nixops</a> which also does the spot-price
 bidding for us:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ nixops create <span class="s1">&#39;&lt;nix/test-setup.nix&gt;&#39;</span>
@@ -59,8 +59,8 @@ for the full configuration including kernel tuning).</p>
 <p>Unfortunately I could not get the distributed tsung going: The
 distributed testing uses an Erlang function called <code>slave:start</code> which
 connects through SSH and spawns Erlang on the remote host. This failed
-for reasons I didn't have time to debug.</p>
-<p>But without the distributed testing there's a problem: A single server
+for reasons I didn&rsquo;t have time to debug.</p>
+<p>But without the distributed testing there&rsquo;s a problem: A single server
 can only open ~65000 connections because ports are limited to 16
 bits. We want more connections though!</p>
 <p>Luckily tsung supports using multiple virtual IP addresses for a
@@ -86,7 +86,7 @@ code/src/tsung-conf.xml -&gt; root@52.31.104.126:tsung-conf.xml
 tsung-conf.xml                                                  100% <span class="m">1494</span>     1.5KB/s   00:00
 </code></pre></div><h1 id="running-tsung">Running tsung</h1>
 <p>Our Nix config tuned the TCP stack and increased kernel limits, but we
-still need to run <code>ulimit</code> to make sure we're not hitting the default
+still need to run <code>ulimit</code> to make sure we&rsquo;re not hitting the default
 limit of 1024 file descriptors:</p>
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">$ nixops ssh tsung-1
 [root@tsung-1:~]# ulimit -n 2000000
@@ -109,7 +109,7 @@ connection tracking requires memory. When that memory is full the
 [ 2960.678016] nf_conntrack: table full, dropping packet
 [ 2992.936177] TCP: request_sock_TCP: Possible SYN flooding on port 8080. Sending cookies.  Check SNMP counters.
 [ 2998.005969] net_ratelimit: 364 callbacks suppressed
-</code></pre></div><p>That log also shows that we triggered the kernel's DOS protection
+</code></pre></div><p>That log also shows that we triggered the kernel&rsquo;s DOS protection
 against SYN flooding. We fixed that by increasing
 <code>net.ipv4.tcp_max_syn_backlog</code> and <code>net.core.somaxconn</code>.</p>
 <p>Now when running tsung we got up to about 120k connections on the
@@ -117,7 +117,7 @@ Haskell websocket box:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[</span>root@websock-server:~<span class="o">]</span><span class="c1"># netstat -ntp  | grep -v TIME_WAIT | wc -l</span>
  <span class="m">119748</span>
 </code></pre></div><h2 id="problem-2-the-erlang-process-limit">Problem 2: The Erlang process limit</h2>
-<p>But then tsung's web UI would suddenly throw 500 errors and drop all
+<p>But then tsung&rsquo;s web UI would suddenly throw 500 errors and drop all
 connections. Initially we could not figure out what was going on
 because tsung is really slow at writing logs. Waiting for 5 minutes and
 then checking the logs reveals the message:</p>
@@ -127,13 +127,13 @@ Too many processes
 Erlang processes and we tried this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ tsung -p <span class="m">1250000</span> -f tsung-conf.xml start
 </code></pre></div><p>But no luck - the same problem occurs. Turns out that the <code>-p</code> switch
-doesn't actually work (we filed
+doesn&rsquo;t actually work (we filed
 <a href="https://github.com/processone/tsung/issues/136"target="_blank">a bug</a> which was
 fixed within hours. Thanks!).</p>
 <p>We <a href="https://github.com/WeAreWizards/haskell-websockets-tsung-benchmark/blob/master/nix/maxproc.patch"target="_blank">patched</a> tsung ourselves for now.</p>
 <h2 id="some-performance-numbers">Some performance numbers</h2>
 <p>So far we spent most of our time fighting tsung and the slighly
-bizarre Erlang ecosystem. Here's what 100k users look like for CPU and
+bizarre Erlang ecosystem. Here&rsquo;s what 100k users look like for CPU and
 memory for the Haskell server:</p>
 <div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
  1944 root      20   0 7210960 2.656g  22524 S 177.7 16.9   2:58.50 haskell-websock
@@ -144,7 +144,7 @@ users:</p>
 </code></pre></div><h2 id="more-addresses">More addresses</h2>
 <p>In order to go higher we needed more IP addresses for tsung. This is
 where we learnt that EC2 limits the number of additional private IPs
-based on the instance type. You'll see a message like this:</p>
+based on the instance type. You&rsquo;ll see a message like this:</p>
 <blockquote>
 <p>eni-5af8fa3d: Number of private addresses will exceed limit.</p>
 </blockquote>
@@ -170,8 +170,8 @@ connections:</p>
 warning: are you sure you want to destroy EC2 machine ‘tsung-1’? <span class="o">(</span>y/N<span class="o">)</span> y
 warning: are you sure you want to destroy EC2 machine ‘websock-server’? <span class="o">(</span>y/N<span class="o">)</span> y
 </code></pre></div><p>The whole experiment took ~2.5 hours and cost us a grand total of
-$0.25. To get to 4x the connections (two million) we'd need two
-m4.4xlarge or r2.2xlarge instances but that's for another day.</p>
+$0.25. To get to 4x the connections (two million) we&rsquo;d need two
+m4.4xlarge or r2.2xlarge instances but that&rsquo;s for another day.</p>
 <h2 id="graphs">Graphs</h2>
 <p>Our graphs show very nicely that we add a bit more than 1000
 connections a second, and that the connection count follows the user

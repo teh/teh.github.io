@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.63.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>NixOS security-updates update&nbsp;&ndash;&nbsp;Tom&#39;s Blog</title><link rel="stylesheet" href="/css/core.min.7e47878394f03603824473a82c20e6c1cd4cf4cbc0aaa9d7b2ca0f8b95ff7c4e9a8fedf312097f0b83f1adde371c65b9.css" integrity="sha384-fkeHg5TwNgOCRHOoLCDmwc1M9MvAqqnXssoPi5X/fE6aj&#43;3zEgl/C4Pxrd43HGW5"><body>
+<meta name="supported-color-schemes" content="light dark"><title>NixOS security-updates update&nbsp;&ndash;&nbsp;Tom&#39;s Blog</title><link rel="stylesheet" href="/css/core.min.4d606001d0ab7504ebb059c845818cd08b97dd32bfcea8417952386b9836caeea2c016ab13442520e139fdf382664f47.css" integrity="sha384-TWBgAdCrdQTrsFnIRYGM0IuX3TK/zqhBeVI4a5g2yu6iwBarE0QlIOE5/fOCZk9H"><body>
     <div class="base-body max-width"><section id="header" class="header max-body-width">
     <div class="header-wrap">
         <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom&#39;s Blog</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
@@ -9,11 +9,11 @@
     </div>
 </section><div id="content" class="flex-body max-body-width"><section class="article-header">
     <h1>NixOS security-updates update</h1><p class="article-date">2016-10-01</p></section>
-<article class="markdown-body"><p>This weekend Nicolas Pierron (<a href="http://github.com/nbp"target="_blank">nbp</a> on GitHub) came to London for a NixOS hackathon. He's been working on improving security updates in NixOS for a while. He's the author of the <a href="http://nixos.org/nixos/manual/index.html#sec-modularity"target="_blank">NixOS module system</a> amongst other things. He has a successful track record of complex, tree-wide changes so if anyone can nail this, it's him.</p>
+<article class="markdown-body"><p>This weekend Nicolas Pierron (<a href="http://github.com/nbp"target="_blank">nbp</a> on GitHub) came to London for a NixOS hackathon. He&rsquo;s been working on improving security updates in NixOS for a while. He&rsquo;s the author of the <a href="http://nixos.org/nixos/manual/index.html#sec-modularity"target="_blank">NixOS module system</a> amongst other things. He has a successful track record of complex, tree-wide changes so if anyone can nail this, it&rsquo;s him.</p>
 <p>The main output of our weekend is this blog post with his ideas.</p>
 <h2 id="problem-description">Problem description</h2>
 <p><strong>Problem tl;dr:</strong> It takes too damn long before security updates arrive on end-user machines or servers.</p>
-<p>A quick recap of how NixOS currently works. Let's work in a small universe with just <em>libc</em>, <em>openssl</em> and <em>nginx</em> in it. <em>openssl</em> depends on <em>libc</em>, and <em>nginx</em> depends on <em>openssl</em>, and <em>nginx</em> also depends on <em>libc</em> via <em>openssl</em>:</p>
+<p>A quick recap of how NixOS currently works. Let&rsquo;s work in a small universe with just <em>libc</em>, <em>openssl</em> and <em>nginx</em> in it. <em>openssl</em> depends on <em>libc</em>, and <em>nginx</em> depends on <em>openssl</em>, and <em>nginx</em> also depends on <em>libc</em> via <em>openssl</em>:</p>
 <p><a target="_blank" rel="noopener noreferrer" href="/images/nixos-security-updates-upadate/base-case.svg"><img class="img" src="/images/nixos-security-updates-upadate/base-case.svg"
         alt="Normal case"/></a></p>
 <p>Now lets assume that we have a critical bug in <em>libc</em>:</p>
@@ -27,7 +27,7 @@
         alt/></a></p>
 <p><strong>This is a problem.</strong> A full rebuild of our 30k+ packages takes several days. If you want the critical security fix faster you need to compile on your local machine.</p>
 <h2 id="solution-constraints">Solution constraints</h2>
-<p>Before we describe Nicolas&rsquo; solution let's enumerate some constraints:</p>
+<p>Before we describe Nicolas&rsquo; solution let&rsquo;s enumerate some constraints:</p>
 <ul>
 <li>Must be transparent to end-users</li>
 <li>Must be much faster than full rebuild</li>
@@ -36,7 +36,7 @@
 <li>No overhead for package maintainers</li>
 </ul>
 <h2 id="current-solution">Current solution</h2>
-<p>Right now NixOS has <code>replaceDependencies</code> and <code>replaceRuntimeDependencies</code> which are not easy to understand, and therefore rarely used by maintainers. I won't go into details because the adaption shows that this is a non-solution.</p>
+<p>Right now NixOS has <code>replaceDependencies</code> and <code>replaceRuntimeDependencies</code> which are not easy to understand, and therefore rarely used by maintainers. I won&rsquo;t go into details because the adaption shows that this is a non-solution.</p>
 <p>As a result there now is a <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/release-small.nix"target="_blank">nixos-small</a> channel that contains a small subset of packages that rebuild quickly.</p>
 <h2 id="proposed-solution">Proposed solution</h2>
 <p>The problem is that recompiling all packages takes a long time. Therefore the solution must be to avoid re-compiling all packages! Security updates are usually ABI compatible which makes this a reasonable idea. Otherwise Debian could not work.</p>
@@ -47,7 +47,7 @@
 <p>If you only care about using this new tech then you can stop reading here.</p>
 <h1 id="implementation-details">Implementation details</h1>
 <p>It took Nicolas an entire afternoon to explain this one so get buckled in. I am using my own words and understanding of his ideas in the hope that the translation requires less brain power than Nicolas has at his disposal.</p>
-<p>First, we need to rebuild all buggy packages. In our example above that's just <em>libc</em>, but the solution needs to work for more than one package.</p>
+<p>First, we need to rebuild all buggy packages. In our example above that&rsquo;s just <em>libc</em>, but the solution needs to work for more than one package.</p>
 <p>For this specific example: We have to rebuild <em>libc</em> somehow while avoiding rebuilding anything else immediately.</p>
 <h3 id="fixed-point-digression">Fixed-point digression</h3>
 <p>Fixed-points are used extensively in NixOS. A fixpoint is a mathematical concept that means &ldquo;apply a function to its own output until the output no longer changes&rdquo;. I.e. <code>f(x) == x</code>. Computers can use fixed points in combination with lazy evaluation. If nothing is left to evaluate then we have reached the fixed point.</p>
@@ -61,7 +61,7 @@
                             <span class="o">+</span> <span class="p">{</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">b</span><span class="p">;</span> <span class="p">}</span><span class="o">.</span><span class="n">b</span><span class="p">;</span> <span class="p">}</span>
 <span class="err">=</span><span class="o">&gt;</span> <span class="n">f</span> <span class="err">=</span> <span class="n">x</span><span class="p">:</span> <span class="p">{</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;</span> <span class="p">}</span>
 <span class="err">=</span><span class="o">&gt;</span> <span class="n">f</span> <span class="err">=</span> <span class="n">x</span><span class="p">:</span> <span class="p">{</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span> <span class="p">}</span>
-</code></pre></div><p>Crucially, in line 2 the <code>.a</code> and <code>.b</code> accessors no longer reference <code>c</code>. That means the evaluator can return a value without looking at <code>x</code>. And because <code>x</code> really is <code>f(x)</code> the evaluator doesn't have to evaluate <code>f(x)</code> again, thus breaking the loop.</p>
+</code></pre></div><p>Crucially, in line 2 the <code>.a</code> and <code>.b</code> accessors no longer reference <code>c</code>. That means the evaluator can return a value without looking at <code>x</code>. And because <code>x</code> really is <code>f(x)</code> the evaluator doesn&rsquo;t have to evaluate <code>f(x)</code> again, thus breaking the loop.</p>
 <p>In a strict language the evaluator would try to calculate <code>x</code> again and loop forever.</p>
 <hr>
 <p><em>nixpkgs</em> is a giant function that describes all packages in Nix - returning nested attribute sets. We can change an individual package via <a href="https://nixos.org/nixpkgs/manual/#sec-modify-via-packageOverrides"target="_blank"><code>packageOverrides</code></a>.</p>
@@ -101,19 +101,19 @@
 </ul>
 <h3 id="copy--fixup-instead-of-rebuild">Copy &amp; fixup instead of rebuild</h3>
 <p>We can now rebuild individual, buggy packages without rebuilding everything. But we still need to adjust the dependency pointers in the remaining packages. E.g. replace <em>gwl3ppqj4i730nhd4f50ncl5jc4n97ks-glibc-2.23</em> with <em>yxkk1j7h8kyglippv2df0gcx8yknhirb-glibc-2.23</em>.</p>
-<p>Once again we're going to evaluate a fixpoint of <em>nixpkgs</em>, but this time we're inserting a new derivation called <a href="https://github.com/NixOS/nixpkgs/pull/10851/files#diff-017a38a631b06991d33857f7681874b3R343"target="_blank">patchDependencies</a> that depends on the already-fully-built package. This new derivation</p>
+<p>Once again we&rsquo;re going to evaluate a fixpoint of <em>nixpkgs</em>, but this time we&rsquo;re inserting a new derivation called <a href="https://github.com/NixOS/nixpkgs/pull/10851/files#diff-017a38a631b06991d33857f7681874b3R343"target="_blank">patchDependencies</a> that depends on the already-fully-built package. This new derivation</p>
 <ol>
 <li>Copies the package contents</li>
-<li>Patches the dependencies with an <code>sed</code> expression. Yep, that's right. We're using sed to patch binary files!</li>
+<li>Patches the dependencies with an <code>sed</code> expression. Yep, that&rsquo;s right. We&rsquo;re using sed to patch binary files!</li>
 </ol>
 <p>This concludes the high-level overview. There are more icky details in Nicolas&rsquo; <a href="%28https://github.com/NixOS/nixpkgs/pull/10851%29">pull request</a>.</p>
 <h2 id="random-notes">Random notes</h2>
 <ul>
 <li>
-<p>A side-effect of using sed to patch arbitrary binary and text files is that we have to keep the same string length. If something changes from <code>glibc-2.23</code> to <code>glibc-2.23.1</code> then a simple replace will break offsets in shared libraries. This is handled in Nicolas&rsquo; patch by renaming the package if the lengths don't match.</p>
+<p>A side-effect of using sed to patch arbitrary binary and text files is that we have to keep the same string length. If something changes from <code>glibc-2.23</code> to <code>glibc-2.23.1</code> then a simple replace will break offsets in shared libraries. This is handled in Nicolas&rsquo; patch by renaming the package if the lengths don&rsquo;t match.</p>
 </li>
 <li>
-<p>We're not building the copy &amp; fixup packages on Hydra. As a result we're saving time by not downloading the full binaries again. Instead they're built locally &ldquo;from source&rdquo;. Building is just copy &amp; fixup though, so roughly as fast as your disk IO.</p>
+<p>We&rsquo;re not building the copy &amp; fixup packages on Hydra. As a result we&rsquo;re saving time by not downloading the full binaries again. Instead they&rsquo;re built locally &ldquo;from source&rdquo;. Building is just copy &amp; fixup though, so roughly as fast as your disk IO.</p>
 </li>
 </ul>
 <h2 id="current-state--links">Current state &amp; links</h2>

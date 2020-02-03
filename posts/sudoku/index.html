@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.63.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Solving Sudoku with a SAT solver&nbsp;&ndash;&nbsp;Tom&#39;s Blog</title><link rel="stylesheet" href="/css/core.min.7e47878394f03603824473a82c20e6c1cd4cf4cbc0aaa9d7b2ca0f8b95ff7c4e9a8fedf312097f0b83f1adde371c65b9.css" integrity="sha384-fkeHg5TwNgOCRHOoLCDmwc1M9MvAqqnXssoPi5X/fE6aj&#43;3zEgl/C4Pxrd43HGW5"><body>
+<meta name="supported-color-schemes" content="light dark"><title>Solving Sudoku with a SAT solver&nbsp;&ndash;&nbsp;Tom&#39;s Blog</title><link rel="stylesheet" href="/css/core.min.4d606001d0ab7504ebb059c845818cd08b97dd32bfcea8417952386b9836caeea2c016ab13442520e139fdf382664f47.css" integrity="sha384-TWBgAdCrdQTrsFnIRYGM0IuX3TK/zqhBeVI4a5g2yu6iwBarE0QlIOE5/fOCZk9H"><body>
     <div class="base-body max-width"><section id="header" class="header max-body-width">
     <div class="header-wrap">
         <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom&#39;s Blog</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
@@ -13,8 +13,8 @@
 <p>One easy way to encode Sudoku with binary variables is the presence (1) or absence (0) of a digit in a given square. I.e. we
 produce a 9x9x9 matrix of binary variables, and then produce an expression of all valid states in
 in <a href="https://en.wikipedia.org/wiki/Conjunctive_normal_form"target="_blank">Conjunctive Normal Form</a> (CNF).</p>
-<p>We're using <a href="https://pypi.org/project/pycosat/"target="_blank">pycosat</a> which encodes CNF as a 2-nested list of positive or negative variable (not) numbers.</p>
-<p>For example, to encode that the cell at position <code>(0, 0)</code> must contain <strong>at least</strong> one digit from 1 to 9 we'd write:</p>
+<p>We&rsquo;re using <a href="https://pypi.org/project/pycosat/"target="_blank">pycosat</a> which encodes CNF as a 2-nested list of positive or negative variable (not) numbers.</p>
+<p>For example, to encode that the cell at position <code>(0, 0)</code> must contain <strong>at least</strong> one digit from 1 to 9 we&rsquo;d write:</p>
 <div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="p">[</span>
     <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span><span class="p">,</span> <span class="c1"># read: 1 or 2 or 3 or ... or 9</span>
 <span class="p">]</span>
@@ -66,7 +66,7 @@ sys	0m0.019s
 </code></pre></div><p>I suspect the majority of time is spent allocating memory for the highly inefficient list/object representation that pycosat uses (list of list of Python ints).</p>
 <p>Another interesting exploration from here is to exclude a solution, and then run the solver again.  E.g. for the solution shown above we can encode that cell at index <code>(0, 0)</code> must not be 8, etc. That way we can generate all
 possible solutions until we hit UNSAT.</p>
-<p>If you start with an empty board you'll enumerate <a href="https://en.wikipedia.org/wiki/Mathematics_of_Sudoku#Enumerating_all_possible_Sudoku_solutions"target="_blank">all valid Sudoku boards</a>, totalling 6.67e21 configurations. That is probably a bit too much for my laptop.</p></article><section class="article-navigation"><p><a class="link" href="/posts/how-does-a-dokku-work/"><span class="li"></span>How does a Dokku work?</a></p><p><a class="link" href="/posts/stuff-i-learned-3/"><span class="li"></span>Stuff I learned - 3</a class="link">
+<p>If you start with an empty board you&rsquo;ll enumerate <a href="https://en.wikipedia.org/wiki/Mathematics_of_Sudoku#Enumerating_all_possible_Sudoku_solutions"target="_blank">all valid Sudoku boards</a>, totalling 6.67e21 configurations. That is probably a bit too much for my laptop.</p></article><section class="article-navigation"><p><a class="link" href="/posts/how-does-a-dokku-work/"><span class="li"></span>How does a Dokku work?</a></p><p><a class="link" href="/posts/stuff-i-learned-3/"><span class="li"></span>Stuff I learned - 3</a class="link">
     </p></section></div><section id="footer" class="footer max-body-width"><p>Tom's Blog</p>
 <p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
 </body>

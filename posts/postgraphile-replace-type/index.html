@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.62.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.63.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Replacing types in Postgraphile&nbsp;&ndash;&nbsp;Tom&#39;s Blog</title><link rel="stylesheet" href="/css/core.min.7e47878394f03603824473a82c20e6c1cd4cf4cbc0aaa9d7b2ca0f8b95ff7c4e9a8fedf312097f0b83f1adde371c65b9.css" integrity="sha384-fkeHg5TwNgOCRHOoLCDmwc1M9MvAqqnXssoPi5X/fE6aj&#43;3zEgl/C4Pxrd43HGW5"><body>
+<meta name="supported-color-schemes" content="light dark"><title>Replacing types in Postgraphile&nbsp;&ndash;&nbsp;Tom&#39;s Blog</title><link rel="stylesheet" href="/css/core.min.4d606001d0ab7504ebb059c845818cd08b97dd32bfcea8417952386b9836caeea2c016ab13442520e139fdf382664f47.css" integrity="sha384-TWBgAdCrdQTrsFnIRYGM0IuX3TK/zqhBeVI4a5g2yu6iwBarE0QlIOE5/fOCZk9H"><body>
     <div class="base-body max-width"><section id="header" class="header max-body-width">
     <div class="header-wrap">
         <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom&#39;s Blog</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
@@ -9,16 +9,16 @@
     </div>
 </section><div id="content" class="flex-body max-body-width"><section class="article-header">
     <h1>Replacing types in Postgraphile</h1><p class="article-date">2020-01-05</p></section>
-<article class="markdown-body"><p><a href="https://www.graphile.org/postgraphile/introduction/"target="_blank">Postgraphile</a> comes with many good defaults out of the box, but occassionally it's necessary to replace a default type.</p>
+<article class="markdown-body"><p><a href="https://www.graphile.org/postgraphile/introduction/"target="_blank">Postgraphile</a> comes with many good defaults out of the box, but occassionally it&rsquo;s necessary to replace a default type.</p>
 <hr>
-<p><strong>Update 6th Jan</strong>: <a href="https://github.com/benjie"target="_blank">Benji</a> suggested in discord that it's better to use the API to query
+<p><strong>Update 6th Jan</strong>: <a href="https://github.com/benjie"target="_blank">Benjie</a> suggested in discord that it&rsquo;s better to use the API to query
 the type OID like this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-typescript" data-lang="typescript"><span class="kr">const</span> <span class="nx">timestampOid</span> <span class="o">=</span> <span class="nx">build</span><span class="p">.</span><span class="nx">pgIntrospectionResultsByKind</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span>
     <span class="p">(</span><span class="nx">type</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">type</span><span class="p">.</span><span class="nx">namespaceName</span> <span class="o">===</span> <span class="s1">&#39;pg_catalog&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">;</span>
     <span class="p">}</span><span class="p">)</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
 </code></pre></div><hr>
-<p>(<strong>Old</strong>) To replace a type we first need the type's <code>oid</code>. In a psql shell do e.g. this:</p>
+<p>(<strong>Old</strong>) To replace a type we first need the type&rsquo;s <code>oid</code>. In a psql shell do e.g. this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="n">tom</span><span class="o">=</span><span class="o">#</span> <span class="k">select</span> <span class="n">typname</span><span class="p">,</span> <span class="n">oid</span> <span class="k">from</span> <span class="n">pg_type</span> <span class="k">where</span> <span class="n">typname</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="s1">timestamp</span><span class="s1">&#39;</span><span class="p">;</span>
   <span class="n">typname</span>  <span class="o">|</span> <span class="n">oid</span>
 <span class="c1">-----------+------
@@ -61,7 +61,7 @@ we can implement the resolver directly in the type.</p>
         <span class="k">return</span> <span class="nx">build</span><span class="p">;</span>
     <span class="p">}</span><span class="p">)</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre></div><p>(Code inspired by <a href="https://github.com/graphile/postgraphile/issues/1035"target="_blank">this issue</a>)</p></article><section class="article-navigation"><p><a class="link" href="/posts/kernel-self-protection/"><span class="li"></span>Kernel Self Protection</a class="link">
+</code></pre></div><p>(Code inspired by <a href="https://github.com/graphile/postgraphile/issues/1035"target="_blank">this issue</a>)</p></article><section class="article-navigation"><p><a class="link" href="/posts/spineless-tagless-g/"><span class="li"></span>The Spineless Tagless G Machine</a></p><p><a class="link" href="/posts/kernel-self-protection/"><span class="li"></span>Kernel Self Protection</a class="link">
     </p></section></div><section id="footer" class="footer max-body-width"><p>Tom's Blog</p>
 <p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
 </body>

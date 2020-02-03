@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.63.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>The Spineless Tagless G Machine&nbsp;&ndash;&nbsp;Tom&#39;s Blog</title><link rel="stylesheet" href="/css/core.min.4d606001d0ab7504ebb059c845818cd08b97dd32bfcea8417952386b9836caeea2c016ab13442520e139fdf382664f47.css" integrity="sha384-TWBgAdCrdQTrsFnIRYGM0IuX3TK/zqhBeVI4a5g2yu6iwBarE0QlIOE5/fOCZk9H"><body>
+    <div class="base-body max-width"><section id="header" class="header max-body-width">
+    <div class="header-wrap">
+        <div class="header-left-side"><a class="home" href="/"><span class="site-name">Tom&#39;s Blog</span><span class="site-slogan"> - The pay's not great, but the work is hard</span></a></div>
+        <div class="header-right-side"><div class="nav-wrap"><div class="nav"><a class="site-tag" href="/tags/">Tags</a></div></div></div>
+    </div>
+</section><div id="content" class="flex-body max-body-width"><section class="article-header">
+    <h1>The Spineless Tagless G Machine</h1><p class="article-date">2020-02-03</p></section>
+<article class="markdown-body"><p>Haskell&rsquo;s evaluation model is interesting because it efficiently maps lazy evaluation of a functional language onto modern hardware with registers and memory pointers.</p>
+<p>The virtual machine running both the code in the abstract, and on the hardware, is called the <em>Spineless Tagless G Machine</em>, and is explained in the following two papers:</p>
+<ol>
+<li><a href="https://www.microsoft.com/en-us/research/wp-content/uploads/1992/04/spineless-tagless-gmachine.pdf"target="_blank">Implementing lazy functional languages on stock hardware: the Spineless Tagless G-machine (PDF)</a></li>
+<li><a href="https://simonmar.github.io/bib/papers/eval-apply.pdf"target="_blank">Making a fast curry: push/enter vs. eval/apply for higher-order languages (PDF)</a></li>
+</ol>
+<p>To understand how it works I implemented a version in TypeScript.
+Below are my implementation notes. You can skip the notes and <strong><a href="/stg/">try the machine here</a></strong>.</p>
+<h2 id="pushenter-vs-evalapply">Push/Enter VS Eval/Apply</h2>
+<p>The basic construction of the machine is a Heap, a Stack and something like an instruction pointer, pointing to the current expression being evaluated.</p>
+<p>The initial paper (1) describes a model called Push/Enter, where the arguments to a function application (think <code>map double [1, 2, 3]</code>) are pushed to the stack, and then the function itself checks whether it got passed</p>
+<ul>
+<li>too many arguments (return a new function),</li>
+<li>exactly the right arguments (run code),</li>
+<li>or too few (curry).</li>
+</ul>
+<p>The implementation of that model is apparently complex, so the second paper (2) describes a model that&rsquo;s easier to implement with roughly the same performance, called Eval/Apply. I&rsquo;m only implementing Eval/Apply.</p>
+<p>For Eval/Apply we always push an <em>Apply Continuation</em> with specific arguments to the stack, and then move the instruction pointer to the function expression. If the expression returns something that can be applied to arguments, we pop the Apply Continuation of the stack, and then decide what to do based on the function arity and the arguments available.</p>
+<h2 id="substitution">Substitution</h2>
+<p>Neither paper really describes substitution in any detail, and that&rsquo;s where my code is ugliest. I made things up as I went along. There is a Haskell implementation called <a href="https://wiki.haskell.org/Ministg"target="_blank">MiniSTG</a> which is infinitely nicer because Haskell&rsquo;s pattern matching is great for writing state-machine transition code.</p>
+<p>The basic idea behind substitution is this: When evaluating the following expression, allocating an integer on the heap with let, the <code>x</code> on the right needs to be replaced with the actual heap address of the allocated object.</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell"><span class="kr">let</span> <span class="n">x</span> <span class="ow">=</span> <span class="kt">I</span> <span class="mi">1</span> <span class="kr">in</span> <span class="n">x</span>
+<span class="c1">-- becomes: let x = $0 in x</span>
+<span class="c1">-- becomes: $0</span>
+</code></pre></div><p>The same happens e.g. in function applications: The passed arguments replace variables in the function body.</p>
+<p>To substitute we need to walk expressions and objects on the heap recursively. This works fine in JavaScript where I have a dynamic type for everything, but it&rsquo;s not clear to me yet how this works in machine code. The papers mention addressing memory relative to an allocation pointer so that&rsquo;s probably part of it.</p></article><section class="article-navigation"><p><a class="link" href="/posts/postgraphile-replace-type/"><span class="li"></span>Replacing types in Postgraphile</a class="link">
+    </p></section></div><section id="footer" class="footer max-body-width"><p>Tom's Blog</p>
+<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
+</body>
+
+</html>

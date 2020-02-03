@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Tom&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
-    <lastBuildDate>Sun, 05 Jan 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 03 Feb 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://teh.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>The Spineless Tagless G Machine</title>
+      <link>https://teh.github.io/posts/spineless-tagless-g/</link>
+      <pubDate>Mon, 03 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://teh.github.io/posts/spineless-tagless-g/</guid>
+      <description>&lt;p&gt;Haskell&amp;rsquo;s evaluation model is interesting because it efficiently maps lazy evaluation of a functional language onto modern hardware with registers and memory pointers.&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Replacing types in Postgraphile</title>
@@ -17,7 +26,7 @@
       <pubDate>Sun, 05 Jan 2020 00:00:00 +0000</pubDate>
       
       <guid>https://teh.github.io/posts/postgraphile-replace-type/</guid>
-      <description>&lt;p&gt;&lt;a href=&#34;https://www.graphile.org/postgraphile/introduction/&#34;target=&#34;_blank&#34;&gt;Postgraphile&lt;/a&gt; comes with many good defaults out of the box, but occassionally it&#39;s necessary to replace a default type.&lt;/p&gt;</description>
+      <description>&lt;p&gt;&lt;a href=&#34;https://www.graphile.org/postgraphile/introduction/&#34;target=&#34;_blank&#34;&gt;Postgraphile&lt;/a&gt; comes with many good defaults out of the box, but occassionally it&amp;rsquo;s necessary to replace a default type.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -91,7 +100,7 @@
       <guid>https://teh.github.io/posts/running-your-own-openvpn/</guid>
       <description>I consider privacy as important but I am not a government-conspiracy nut. Even so, the passed Investigatory powers bill is extreme, and it should worry you. Political avenues have been exhausted. Legal challenges are unlikely to succeed unless lawyers can argue that the IPB is incompatible with fundamental human rights.
 The only option left is technology.
-First, some motivation by showing examples of what will be stored. Here is the government&#39;s clarification of Internet Connection Records.</description>
+First, some motivation by showing examples of what will be stored. Here is the government&amp;rsquo;s clarification of Internet Connection Records.</description>
     </item>
     
     <item>
@@ -109,7 +118,7 @@ First, some motivation by showing examples of what will be stored. Here is the g
       <pubDate>Thu, 03 Nov 2016 00:00:00 +0000</pubDate>
       
       <guid>https://teh.github.io/posts/ipython-shells-with-nix-updated/</guid>
-      <description>&lt;p&gt;I&#39;ve written about IPython shells with Nix &lt;a href=&#34;https://theshortlog.com/2016/02/11/ipython-nix/&#34;target=&#34;_blank&#34;&gt;previously&lt;/a&gt;.&lt;/p&gt;</description>
+      <description>&lt;p&gt;I&amp;rsquo;ve written about IPython shells with Nix &lt;a href=&#34;https://theshortlog.com/2016/02/11/ipython-nix/&#34;target=&#34;_blank&#34;&gt;previously&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -127,7 +136,7 @@ First, some motivation by showing examples of what will be stored. Here is the g
       <pubDate>Sat, 01 Oct 2016 00:00:00 +0000</pubDate>
       
       <guid>https://teh.github.io/posts/nix-security-updates-update/</guid>
-      <description>&lt;p&gt;This weekend Nicolas Pierron (&lt;a href=&#34;http://github.com/nbp&#34;target=&#34;_blank&#34;&gt;nbp&lt;/a&gt; on GitHub) came to London for a NixOS hackathon. He&#39;s been working on improving security updates in NixOS for a while. He&#39;s the author of the &lt;a href=&#34;http://nixos.org/nixos/manual/index.html#sec-modularity&#34;target=&#34;_blank&#34;&gt;NixOS module system&lt;/a&gt; amongst other things. He has a successful track record of complex, tree-wide changes so if anyone can nail this, it&#39;s him.&lt;/p&gt;
+      <description>&lt;p&gt;This weekend Nicolas Pierron (&lt;a href=&#34;http://github.com/nbp&#34;target=&#34;_blank&#34;&gt;nbp&lt;/a&gt; on GitHub) came to London for a NixOS hackathon. He&amp;rsquo;s been working on improving security updates in NixOS for a while. He&amp;rsquo;s the author of the &lt;a href=&#34;http://nixos.org/nixos/manual/index.html#sec-modularity&#34;target=&#34;_blank&#34;&gt;NixOS module system&lt;/a&gt; amongst other things. He has a successful track record of complex, tree-wide changes so if anyone can nail this, it&amp;rsquo;s him.&lt;/p&gt;
 &lt;p&gt;The main output of our weekend is this blog post with his ideas.&lt;/p&gt;</description>
     </item>
     
@@ -173,7 +182,7 @@ First, some motivation by showing examples of what will be stored. Here is the g
       <pubDate>Wed, 29 Jun 2016 00:00:00 +0000</pubDate>
       
       <guid>https://teh.github.io/posts/prepare-nixos-disk-image-for-another-computer/</guid>
-      <description>&lt;p&gt;When installing my deep-learning box I didn&#39;t have a monitor so I had to blast the disk-image straight onto a disk with &lt;code&gt;dd&lt;/code&gt;.&lt;/p&gt;</description>
+      <description>&lt;p&gt;When installing my deep-learning box I didn&amp;rsquo;t have a monitor so I had to blast the disk-image straight onto a disk with &lt;code&gt;dd&lt;/code&gt;.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -182,7 +191,7 @@ First, some motivation by showing examples of what will be stored. Here is the g
       <pubDate>Fri, 22 Apr 2016 00:00:00 +0000</pubDate>
       
       <guid>https://teh.github.io/posts/unit-testing-with-types/</guid>
-      <description>&lt;p&gt;I&#39;m an incredibly sloppy programmer, and I lean on the compiler heavily to help me not be stupid. One of my favourite things is to use types to enforce properties of data.&lt;/p&gt;</description>
+      <description>&lt;p&gt;I&amp;rsquo;m an incredibly sloppy programmer, and I lean on the compiler heavily to help me not be stupid. One of my favourite things is to use types to enforce properties of data.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -205,9 +214,9 @@ in my &lt;code&gt;.bashrc&lt;/code&gt;:&lt;/p&gt;</description>
       <description>&lt;p&gt;I really enjoyed reading how the phoenix-framework people managed to
 get to
 &lt;a href=&#34;http://www.phoenixframework.org/v1.0.0/blog/the-road-to-2-million-websocket-connections&#34;target=&#34;_blank&#34;&gt;two million active websocket connections&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;I&#39;ve heard some very smart people say that Haskell has an amazing
+&lt;p&gt;I&amp;rsquo;ve heard some very smart people say that Haskell has an amazing
 runtime with very cheap threads. I have no reason to disbelieve them
-but we thought it&#39;d be fun to see how Haskell fares in a comparable
+but we thought it&amp;rsquo;d be fun to see how Haskell fares in a comparable
 setup.&lt;/p&gt;</description>
     </item>
     
@@ -294,7 +303,7 @@ and strong type system.&lt;/p&gt;</description>
       <pubDate>Sun, 02 Jan 2011 00:00:00 +0000</pubDate>
       
       <guid>https://teh.github.io/posts/randomising_ids/</guid>
-      <description>&lt;p&gt;Sometimes it&#39;s nice to have non-consecutive user-facing IDs. E.g. if you don&#39;t want to show away how many items you have in your database. Common approaches are UUIDs or encoding random bytes as base64. The downside is that those need an extra database column. For example, map (0 -&amp;gt; 29319, 1 -&amp;gt; 58998, 2 -&amp;gt; 29598, &amp;hellip;).&lt;/p&gt;</description>
+      <description>&lt;p&gt;Sometimes it&amp;rsquo;s nice to have non-consecutive user-facing IDs. E.g. if you don&amp;rsquo;t want to show away how many items you have in your database. Common approaches are UUIDs or encoding random bytes as base64. The downside is that those need an extra database column. For example, map (0 -&amp;gt; 29319, 1 -&amp;gt; 58998, 2 -&amp;gt; 29598, &amp;hellip;).&lt;/p&gt;</description>
     </item>
     
     <item>

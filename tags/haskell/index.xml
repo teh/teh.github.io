@@ -53,7 +53,7 @@
       <pubDate>Fri, 22 Apr 2016 00:00:00 +0000</pubDate>
       
       <guid>https://teh.github.io/posts/unit-testing-with-types/</guid>
-      <description>&lt;p&gt;I&#39;m an incredibly sloppy programmer, and I lean on the compiler heavily to help me not be stupid. One of my favourite things is to use types to enforce properties of data.&lt;/p&gt;</description>
+      <description>&lt;p&gt;I&amp;rsquo;m an incredibly sloppy programmer, and I lean on the compiler heavily to help me not be stupid. One of my favourite things is to use types to enforce properties of data.&lt;/p&gt;</description>
     </item>
     
   </channel>
