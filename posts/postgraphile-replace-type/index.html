@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.63.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="supported-color-schemes" content="light dark"><title>Replacing types in Postgraphile&nbsp;&ndash;&nbsp;Tom&#39;s Blog</title><link rel="stylesheet" href="/css/core.min.4d606001d0ab7504ebb059c845818cd08b97dd32bfcea8417952386b9836caeea2c016ab13442520e139fdf382664f47.css" integrity="sha384-TWBgAdCrdQTrsFnIRYGM0IuX3TK/zqhBeVI4a5g2yu6iwBarE0QlIOE5/fOCZk9H"><body>
     <div class="base-body max-width"><section id="header" class="header max-body-width">
@@ -14,12 +14,12 @@
 <p><strong>Update 6th Jan</strong>: <a href="https://github.com/benjie"target="_blank">Benjie</a> suggested in discord that it&rsquo;s better to use the API to query
 the type OID like this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-typescript" data-lang="typescript"><span class="kr">const</span> <span class="nx">timestampOid</span> <span class="o">=</span> <span class="nx">build</span><span class="p">.</span><span class="nx">pgIntrospectionResultsByKind</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span>
-    <span class="p">(</span><span class="nx">type</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="p">(</span><span class="nx">type</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">type</span><span class="p">.</span><span class="nx">namespaceName</span> <span class="o">===</span> <span class="s1">&#39;pg_catalog&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">;</span>
-    <span class="p">}</span><span class="p">)</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+    <span class="p">}).</span><span class="nx">id</span><span class="p">;</span>
 </code></pre></div><hr>
 <p>(<strong>Old</strong>) To replace a type we first need the type&rsquo;s <code>oid</code>. In a psql shell do e.g. this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="n">tom</span><span class="o">=</span><span class="o">#</span> <span class="k">select</span> <span class="n">typname</span><span class="p">,</span> <span class="n">oid</span> <span class="k">from</span> <span class="n">pg_type</span> <span class="k">where</span> <span class="n">typname</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="s1">timestamp</span><span class="s1">&#39;</span><span class="p">;</span>
+<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="n">tom</span><span class="o">=#</span> <span class="k">select</span> <span class="n">typname</span><span class="p">,</span> <span class="n">oid</span> <span class="k">from</span> <span class="n">pg_type</span> <span class="k">where</span> <span class="n">typname</span> <span class="o">=</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">;</span>
   <span class="n">typname</span>  <span class="o">|</span> <span class="n">oid</span>
 <span class="c1">-----------+------
 </span><span class="c1"></span> <span class="k">timestamp</span> <span class="o">|</span> <span class="mi">1114</span>
@@ -37,33 +37,33 @@ we can implement the resolver directly in the type.</p>
 
 <span class="kr">module</span><span class="nx">.exports</span> <span class="o">=</span> <span class="p">(</span>
     <span class="nx">builder</span>: <span class="kt">SchemaBuilder</span>
-<span class="p">)</span> <span class="o">=</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="nx">builder</span><span class="p">.</span><span class="nx">hook</span><span class="p">(</span><span class="s2">&#34;build&#34;</span><span class="p">,</span> <span class="p">(</span><span class="nx">build</span>: <span class="kt">Build</span><span class="p">)</span> <span class="o">=</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">builder</span><span class="p">.</span><span class="nx">hook</span><span class="p">(</span><span class="s2">&#34;build&#34;</span><span class="p">,</span> <span class="p">(</span><span class="nx">build</span>: <span class="kt">Build</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="c1">// Use introspection API to retrieve type OID
 </span><span class="c1"></span>        <span class="kr">const</span> <span class="nx">timestampOid</span> <span class="o">=</span> <span class="nx">build</span><span class="p">.</span><span class="nx">pgIntrospectionResultsByKind</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span>
-            <span class="p">(</span><span class="nx">type</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=</span><span class="o">&gt;</span> <span class="p">{</span>
+            <span class="p">(</span><span class="nx">type</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">type</span><span class="p">.</span><span class="nx">namespaceName</span> <span class="o">===</span> <span class="s1">&#39;pg_catalog&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">;</span>
-            <span class="p">}</span><span class="p">)</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+            <span class="p">}).</span><span class="nx">id</span><span class="p">;</span>
         <span class="nx">build</span><span class="p">.</span><span class="nx">pgRegisterGqlTypeByTypeId</span><span class="p">(</span>
             <span class="nx">timestampOid</span><span class="p">,</span>
-            <span class="p">(</span><span class="p">)</span> <span class="o">=</span><span class="o">&gt;</span> <span class="k">new</span> <span class="nx">build</span><span class="p">.</span><span class="nx">graphql</span><span class="p">.</span><span class="nx">GraphQLObjectType</span><span class="p">(</span><span class="p">{</span>
+            <span class="p">()</span> <span class="o">=&gt;</span> <span class="k">new</span> <span class="nx">build</span><span class="p">.</span><span class="nx">graphql</span><span class="p">.</span><span class="nx">GraphQLObjectType</span><span class="p">({</span>
                 <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Datetime&#39;</span><span class="p">,</span>
                 <span class="nx">fields</span><span class="o">:</span> <span class="p">{</span>
                   <span class="nx">human</span><span class="o">:</span> <span class="p">{</span>
-                      <span class="nx">type</span>: <span class="kt">build.graphql.GraphQLNonNull</span><span class="p">(</span><span class="nx">build</span><span class="p">.</span><span class="nx">graphql</span><span class="p">.</span><span class="nx">GraphQLString</span><span class="p">)</span><span class="p">,</span>
-                      <span class="nx">resolve</span><span class="o">:</span> <span class="p">(</span><span class="nx">parent</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">=</span><span class="o">&gt;</span> <span class="p">{</span>
-                          <span class="k">return</span> <span class="nx">moment</span><span class="p">(</span><span class="nx">parent</span><span class="p">)</span><span class="p">.</span><span class="nx">fromNow</span><span class="p">(</span><span class="p">)</span><span class="p">;</span>
+                      <span class="nx">type</span>: <span class="kt">build.graphql.GraphQLNonNull</span><span class="p">(</span><span class="nx">build</span><span class="p">.</span><span class="nx">graphql</span><span class="p">.</span><span class="nx">GraphQLString</span><span class="p">),</span>
+                      <span class="nx">resolve</span><span class="o">:</span> <span class="p">(</span><span class="nx">parent</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                          <span class="k">return</span> <span class="nx">moment</span><span class="p">(</span><span class="nx">parent</span><span class="p">).</span><span class="nx">fromNow</span><span class="p">();</span>
                       <span class="p">}</span>
-                    <span class="p">}</span><span class="p">,</span>
-                <span class="p">}</span><span class="p">,</span>
-            <span class="p">}</span><span class="p">)</span>
-        <span class="p">)</span><span class="p">;</span>
+                    <span class="p">},</span>
+                <span class="p">},</span>
+            <span class="p">})</span>
+        <span class="p">);</span>
         <span class="k">return</span> <span class="nx">build</span><span class="p">;</span>
-    <span class="p">}</span><span class="p">)</span><span class="p">;</span>
+    <span class="p">});</span>
 <span class="p">}</span>
-</code></pre></div><p>(Code inspired by <a href="https://github.com/graphile/postgraphile/issues/1035"target="_blank">this issue</a>)</p></article><section class="article-navigation"><p><a class="link" href="/posts/spineless-tagless-g/"><span class="li"></span>The Spineless Tagless G Machine</a></p><p><a class="link" href="/posts/kernel-self-protection/"><span class="li"></span>Kernel Self Protection</a class="link">
-    </p></section></div><section id="footer" class="footer max-body-width"><p>Tom's Blog</p>
-<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
+</code></pre></div><p>(Code inspired by <a href="https://github.com/graphile/postgraphile/issues/1035"target="_blank">this issue</a>)</p></article></div><section id="footer" class="footer max-body-width"><p>Tom's Blog</p>
+<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script></div>
 </body>
 
 </html>

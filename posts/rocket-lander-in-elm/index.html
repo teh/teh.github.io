@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.63.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="supported-color-schemes" content="light dark"><title>Experience report: Rocket lander in Elm&nbsp;&ndash;&nbsp;Tom&#39;s Blog</title><link rel="stylesheet" href="/css/core.min.4d606001d0ab7504ebb059c845818cd08b97dd32bfcea8417952386b9836caeea2c016ab13442520e139fdf382664f47.css" integrity="sha384-TWBgAdCrdQTrsFnIRYGM0IuX3TK/zqhBeVI4a5g2yu6iwBarE0QlIOE5/fOCZk9H"><body>
     <div class="base-body max-width"><section id="header" class="header max-body-width">
@@ -51,14 +51,14 @@ argument:</p>
 <span class="p">}</span>
 
 <span class="kd">function</span> <span class="nx">anymul</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">mul</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">mul</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">);</span>
 <span class="p">}</span>
 
 <span class="c1">// The following doesn&#39;t compile and that&#39;s great.
-</span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">mul</span><span class="p">(</span><span class="p">[</span><span class="p">]</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="p">)</span><span class="p">;</span> <span class="c1">// Breaks!
+</span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">mul</span><span class="p">([],</span> <span class="mi">0</span><span class="p">));</span> <span class="c1">// Breaks!
 </span><span class="c1"></span>
 <span class="c1">// This does compile though:
-</span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">anymul</span><span class="p">(</span><span class="p">[</span><span class="p">]</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="p">)</span><span class="p">;</span>
+</span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">anymul</span><span class="p">([],</span> <span class="mi">0</span><span class="p">));</span>
 </code></pre></div><p>In the last few years the space of compile-to-JavaScript got more
 crowded, and a lot of the new entrants are either based on more
 principled languages like Haskell, or compile well-typed languages
@@ -81,7 +81,7 @@ speedy.</p>
 above a function, and types always start with upper case:</p>
 <div class="highlight"><pre class="chroma"><code class="language-elm" data-lang="elm"><span class="mi">1</span> <span class="nf">:</span> <span class="kt">Int</span>
 <span class="kt">True</span> <span class="nf">:</span> <span class="kt">Bool</span>
-<span class="p">[</span><span class="s">&#34;</span><span class="s">a</span><span class="s">b</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;</span><span class="s">c</span><span class="s">d</span><span class="s">e</span><span class="s">&#34;</span><span class="p">]</span> <span class="nf">:</span> <span class="kt">List</span> <span class="kt">String</span>
+<span class="p">[</span><span class="s">&#34;ab&#34;</span><span class="p">,</span> <span class="s">&#34;cde&#34;</span><span class="p">]</span> <span class="nf">:</span> <span class="kt">List</span> <span class="kt">String</span>
 
 <span class="nv">mul</span> <span class="nf">:</span> <span class="kt">Int</span> <span class="nf">-&gt;</span> <span class="kt">Int</span> <span class="nf">-&gt;</span> <span class="kt">Int</span>
 <span class="nv">mul</span> <span class="nv">a</span> <span class="nv">b</span> <span class="nf">=</span> <span class="nv">a</span> <span class="nf">*</span> <span class="nv">b</span>
@@ -156,9 +156,9 @@ game that worked immediately.</p>
 point, but it&rsquo;s still missing a few bits like the promise API I
 mentioned above.</p>
 <p>Just as I finished writing this Evan released an
-<a href="https://github.com/evancz/elm-architecture-tutorial#the-elm-architecture"target="_blank">excellent tutorial on how to architect apps in Elm</a></p></article><section class="article-navigation"><p><a class="link" href="/posts/four-horsemen-of-design/"><span class="li"></span>The four horsemen of design</a></p><p><a class="link" href="/posts/how-does-a-dokku-work/"><span class="li"></span>How does a Dokku work?</a class="link">
-    </p></section></div><section id="footer" class="footer max-body-width"><p>Tom's Blog</p>
-<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
+<a href="https://github.com/evancz/elm-architecture-tutorial#the-elm-architecture"target="_blank">excellent tutorial on how to architect apps in Elm</a></p></article></div><section id="footer" class="footer max-body-width"><p>Tom's Blog</p>
+<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script></div>
 </body>
 
 </html>

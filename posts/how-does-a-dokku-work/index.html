@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.63.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="supported-color-schemes" content="light dark"><title>How does a Dokku work?&nbsp;&ndash;&nbsp;Tom&#39;s Blog</title><link rel="stylesheet" href="/css/core.min.4d606001d0ab7504ebb059c845818cd08b97dd32bfcea8417952386b9836caeea2c016ab13442520e139fdf382664f47.css" integrity="sha384-TWBgAdCrdQTrsFnIRYGM0IuX3TK/zqhBeVI4a5g2yu6iwBarE0QlIOE5/fOCZk9H"><body>
     <div class="base-body max-width"><section id="header" class="header max-body-width">
@@ -40,11 +40,11 @@ web: python catmeow.py
 <div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">flask</span>
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">flask</span><span class="o">.</span><span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-<span class="nd">@app.route</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;</span><span class="s1">/</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">catmeow</span><span class="p">(</span><span class="p">)</span><span class="p">:</span>
-    <span class="k">return</span> <span class="sa"></span><span class="s2">&#34;</span><span class="s2">Cat dreams meow..</span><span class="s2">&#34;</span>
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">catmeow</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s2">&#34;Cat dreams meow..&#34;</span>
 
-<span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="sa"></span><span class="s1">&#39;</span><span class="s1">0.0.0.0</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;</span><span class="s1">PORT</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">5000</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;0.0.0.0&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;PORT&#39;</span><span class="p">,</span> <span class="mi">5000</span><span class="p">)))</span>
 </code></pre></div><p>We can now create a git repository and push to our Dokku instance
 (for this demo we picked the standard digital-ocean one):</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">tom@laptop$ git add requirements.txt Procfile catmeow.py
@@ -64,7 +64,7 @@ Total <span class="m">5</span> <span class="o">(</span>delta 0<span class="o">)<
 </code></pre></div><p>If git is using ssh then why can&rsquo;t you login to Heroku or Dokku with ssh?
 The answer can be found in the server&rsquo;s <code>.ssh/authorized_keys</code> file:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root@remote:/home/dokku# cat .ssh/authorized_keys
-<span class="nv">command</span><span class="o">=</span><span class="s2">&#34;</span><span class="s2">FINGERPRINT=c8:a7:a6:67:ed:29:c4:a0:fe:fa:46:0d:79:1a:81:00
+<span class="nv">command</span><span class="o">=</span><span class="s2">&#34;FINGERPRINT=c8:a7:a6:67:ed:29:c4:a0:fe:fa:46:0d:79:1a:81:00
 </span><span class="s2">         NAME=admin `cat /home/dokku/.sshcommand`
 </span><span class="s2">         </span><span class="nv">$SSH_ORIGINAL_COMMAND</span><span class="s2">&#34;</span>,
 no-agent-forwarding,
@@ -120,7 +120,7 @@ is just standard Heroku build pack action. Installing some pip etc.:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">-----&gt; Stack changed, re-installing runtime
 -----&gt; Installing runtime <span class="o">(</span>python-2.7.8<span class="o">)</span>
 -----&gt; Installing dependencies with pip
-       Downloading/unpacking flask <span class="o">(</span>from -r requirements.txt <span class="o">(</span>line 1<span class="o">)</span><span class="o">)</span>
+       Downloading/unpacking flask <span class="o">(</span>from -r requirements.txt <span class="o">(</span>line 1<span class="o">))</span>
        Running setup.py <span class="o">(</span>path:/tmp/pip_build_u21387/flask/setup.py<span class="o">)</span> egg_info <span class="k">for</span> package flask
        <span class="o">[</span>------------✂------------✂------------✂----<span class="o">]</span>
        <span class="o">[</span> snipping out a lot of irrelevant output.. <span class="o">]</span>
@@ -130,16 +130,16 @@ is just standard Heroku build pack action. Installing some pip etc.:</p>
        Procfile declares types -&gt; web
 -----&gt; Releasing catmeow ...
 -----&gt; Deploying catmeow ...
-<span class="o">=</span><span class="o">=</span><span class="o">=</span><span class="o">=</span><span class="o">=</span>&gt; Application deployed:
+<span class="o">=====</span>&gt; Application deployed:
        http://catmeow.remote
 
 To dokku@104.236.81.129:catmeow
  * <span class="o">[</span>new branch<span class="o">]</span>      master -&gt; master
 </code></pre></div><p>One last interesting note is that Dokku has an interesting plugin
 system that allows e.g. reconfiguring nginx after a push or creating
-PostgreSQL containers so it&rsquo;s not just a toy.</p></article><section class="article-labels"><a class="article-tag li" href=/tags/devops/><span class="hashtag">#</span>Devops</a></section><section class="article-navigation"><p><a class="link" href="/posts/rocket-lander-in-elm/"><span class="li"></span>Experience report: Rocket lander in Elm</a></p><p><a class="link" href="/posts/sudoku/"><span class="li"></span>Solving Sudoku with a SAT solver</a class="link">
-    </p></section></div><section id="footer" class="footer max-body-width"><p>Tom's Blog</p>
-<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section></div>
+PostgreSQL containers so it&rsquo;s not just a toy.</p></article><section class="article-labels"><a class="article-tag li" href=/tags/devops/><span class="hashtag">#</span>Devops</a></section></div><section id="footer" class="footer max-body-width"><p>Tom's Blog</p>
+<p><span>Powered by </span><a href="https://gohugo.io">Hugo</a><span> and the </span><a href="https://themes.gohugo.io/hugo-notepadium/">Notepadium</a></p></section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script></div>
 </body>
 
 </html>
